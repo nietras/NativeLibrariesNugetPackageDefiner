@@ -25,8 +25,8 @@
     <PackageReference Update="@(PackageReference)" PrivateAssets="All" />
   </ItemGroup>
 
-  <Target Name="CopyJoinFragmentsTask" BeforeTargets="Build">
+  <!--<Target Name="CopyJoinFragmentsTask" BeforeTargets="Build">
     <Copy SourceFiles="JoinFragmentsTask.cs" DestinationFolder="C:\Users\Niels\.nuget\packages\nietras.nativelibs.cudnn.cuda11.cudnn_cnn_infer64_8.runtime.win-x64\8.9.1.23-preview.1\tasks\" />
-  </Target>
+  </Target>-->
   
 </Project>
