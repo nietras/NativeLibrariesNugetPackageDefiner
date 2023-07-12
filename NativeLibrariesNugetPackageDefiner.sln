@@ -10,6 +10,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeLibrariesNugetPackage
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeLibrariesNugetPackageDefinerTesterUnitTests", "src\NativeLibrariesNugetPackageDefinerTesterUnitTests\NativeLibrariesNugetPackageDefinerTesterUnitTests.csproj", "{8E5CD16D-0636-445C-B160-70D5DD9E0564}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{08E96163-062F-4A95-A11F-2ACBEE1A7093}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		all-pack.ps1 = all-pack.ps1
+		CODE-OF-CONDUCT.md = CODE-OF-CONDUCT.md
+		getnuget.ps1 = getnuget.ps1
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+		THIRD-PARTY-NOTICES = THIRD-PARTY-NOTICES
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
