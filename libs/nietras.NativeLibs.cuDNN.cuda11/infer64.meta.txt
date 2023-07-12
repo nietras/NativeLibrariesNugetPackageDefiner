@@ -1,0 +1,4 @@
+cudnn64_8
+cudnn_ops_infer64_8
+cudnn_cnn_infer64_8
+cudnn_adv_infer64_8
