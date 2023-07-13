@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
   <metadata minClientVersion="5.10">
     <id>nietras.NativeLibs.cuda11.nvjpeg64_11.runtime.json</id>
-    <version>8.9.1.23-preview.1</version>
+    <version>11.8.0-preview.1</version>
     <authors>nietras</authors>
     <owners>nietras</owners>
     <license type="expression">MIT</license>

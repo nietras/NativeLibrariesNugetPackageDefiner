@@ -1,0 +1,1 @@
+Runtime identifier specific fragment package for native library file too big for a single package on nuget.

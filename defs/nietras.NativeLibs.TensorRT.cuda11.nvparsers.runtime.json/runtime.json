@@ -1,0 +1,9 @@
+{
+  "runtimes": {
+    "win-x64": {
+      "nietras.NativeLibs.TensorRT.cuda11.nvparsers": {
+        "nietras.NativeLibs.TensorRT.cuda11.nvparsers.runtime.win-x64": "8.6.1.6-preview.1"
+      }
+    },
+  }
+}

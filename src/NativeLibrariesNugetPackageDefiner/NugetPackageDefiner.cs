@@ -22,16 +22,15 @@ static class NugetPackageDefiner
     // Probably put in directory structure
     //const string LicenseText = "This software contains source code provided by NVIDIA Corporation.\r\nThe full cuDNN license agreement can be found here.\r\nhttps://docs.nvidia.com/deeplearning/cudnn/sla/index.html";
 
-    public static void FindNativeLibrariesThenDefinePackages(string nativeLibsForPackageDirectory,
-        string author, string targetFrameworkMoniker, string versionSuffix,
+    public static void FindNativeLibrariesThenDefinePackages(
+        string nativeLibsForPackagingDirectory,
+        string author, string targetFrameworkMoniker,
         string outputDirectory, Action<string> log)
     {
-        var basePackageIdentifierExtensionToPackageInfos = new Dictionary<string, List<PackageInfo>>();
-
-        var packageDirectories = Directory.GetDirectories(nativeLibsForPackageDirectory);
+        var packageDirectories = Directory.GetDirectories(nativeLibsForPackagingDirectory);
         foreach (var packageDirectory in packageDirectories)
         {
-            var rootPackageIdentifier = Path.GetRelativePath(nativeLibsForPackageDirectory, packageDirectory)
+            var rootPackageIdentifier = Path.GetRelativePath(nativeLibsForPackagingDirectory, packageDirectory)
                 .Replace(Path.DirectorySeparatorChar, IdSeparator).Replace(Path.AltDirectorySeparatorChar, IdSeparator);
 
             var metaPackageToPackageNames = Directory.GetFiles(packageDirectory, "*.meta.txt").ToDictionary(
@@ -43,6 +42,8 @@ static class NugetPackageDefiner
                 ? File.ReadAllText(packageVersionFilePath)
                 : throw new ArgumentException($"No {VersionFileName} found for '{rootPackageIdentifier}'. " +
                     $"This file must be present and contain a single line with package version.");
+
+            var basePackageIdentifierExtensionToPackageInfos = new Dictionary<string, List<PackageInfo>>();
 
             var runtimeIdentifierDirectories = Directory.GetDirectories(packageDirectory);
             foreach (var runtimeIdentifierDirectory in runtimeIdentifierDirectories)

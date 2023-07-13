@@ -1,0 +1,9 @@
+{
+  "runtimes": {
+    "win-x64": {
+      "nietras.NativeLibs.TensorRT.cuda11.nvinfer_vc_plugin": {
+        "nietras.NativeLibs.TensorRT.cuda11.nvinfer_vc_plugin.runtime.win-x64": "8.6.1.6-preview.1"
+      }
+    },
+  }
+}
