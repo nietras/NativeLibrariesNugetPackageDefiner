@@ -1,0 +1,9 @@
+{
+  "runtimes": {
+    "win-x64": {
+      "nietras.NativeLibs.cuda11.nvrtc64_112_0": {
+        "nietras.NativeLibs.cuda11.nvrtc64_112_0.runtime.win-x64": "11.8.0-preview.1"
+      }
+    },
+  }
+}

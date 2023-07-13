@@ -13,6 +13,7 @@ static class NugetPackageDefiner
     const int NugetPackageSizeMax = 250_000_000;
     const char IdSeparator = '.';
     const string IdRuntimePrefix = "runtime.";
+    const string VersionFileName = "version.txt";
 
     // File versioning is a joke, so need some other way to version the files.
     // Perhaps presence of `.version` file can be used and if none try to get from `FileVersionInfo`.
@@ -37,11 +38,22 @@ static class NugetPackageDefiner
                 f => GetMetaPackageName(f, rootPackageIdentifier),
                 f => File.ReadAllLines(f).Select(l => rootPackageIdentifier + IdSeparator + l).ToArray());
 
+            var packageVersionFilePath = Path.Combine(packageDirectory, VersionFileName);
+            var version = File.Exists(packageVersionFilePath)
+                ? File.ReadAllText(packageVersionFilePath)
+                : throw new ArgumentException($"No {VersionFileName} found for '{rootPackageIdentifier}'. " +
+                    $"This file must be present and contain a single line with package version.");
+
             var runtimeIdentifierDirectories = Directory.GetDirectories(packageDirectory);
             foreach (var runtimeIdentifierDirectory in runtimeIdentifierDirectories)
             {
                 var runtimeIdentifier = Path.GetRelativePath(packageDirectory, runtimeIdentifierDirectory)
                     .Replace(Path.DirectorySeparatorChar, IdSeparator).Replace(Path.AltDirectorySeparatorChar, IdSeparator);
+
+                //var packageRuntimeSpecificVersionFilePath = Path.Combine(runtimeIdentifierDirectory, VersionFileName);
+                //version = File.Exists(packageRuntimeSpecificVersionFilePath)
+                //    ? File.ReadAllText(packageVersionFilePath) : version;
+
 
                 // A specific runtime identifier should only contain one type of
                 // native library file extension, so searching one at a time if
@@ -55,16 +67,19 @@ static class NugetPackageDefiner
                     var fileName = Path.GetFileName(packageFile);
                     var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(packageFile);
                     var fileInfo = new FileInfo(packageFile);
-                    var versionInfo = FileVersionInfo.GetVersionInfo(packageFile);
-                    var version = Version.Parse(versionInfo.FileVersion!);
-                    var nativeLibrarySize = (int)fileInfo.Length;
+                    var nativeLibrarySize = fileInfo.Length;
 
-                    log($"Found '{packageFile}' size {nativeLibrarySize} version {version}"); //versionInfo {versionInfo}");
+                    // Native libraries are very rarely properly versioned, so
+                    // this is just to be able to double check against, defined
+                    // version in version file name.
+                    var versionInfo = FileVersionInfo.GetVersionInfo(packageFile);
+
+                    log($"Found '{packageFile}' size {nativeLibrarySize} " +
+                        $"file version '{versionInfo.FileVersion}' defined version '{version}'");
 
                     var basePackageIdentifier = $"{rootPackageIdentifier}.{fileNameWithoutExtension}";
                     var runtimeSpecificPackageIdentifier = $"{basePackageIdentifier}.{IdRuntimePrefix}{runtimeIdentifier}";
                     var nuspecDirectory = Path.Combine(outputDirectory, runtimeSpecificPackageIdentifier);
-                    var packageVersion = version.ToString() + versionSuffix;
 
                     var splitSegments = EstimateSplitSegments(packageFile, nativeLibrarySize).ToList();
 
@@ -83,7 +98,7 @@ static class NugetPackageDefiner
                             var (fragmentOffset, fragmentSize) = splitSegments[fragmentIndex];
 
                             var fragmentNuspecContents = NuspecDefiner.RuntimeSpecificFragmentPackage(
-                                runtimeSpecificPackageIdentifier, packageVersion, author,
+                                runtimeSpecificPackageIdentifier, version, author,
                                 fragment, fragmentIndex, fragmentCount);
 
                             var fragmentPackageIdentifier = NuspecDefiner.FragmentPackageId(
@@ -112,7 +127,7 @@ static class NugetPackageDefiner
                         splitSegments.Count != 1 ? new(0, 0) : splitSegments[0];
 
                     var nuspecContents = NuspecDefiner.RuntimeSpecificPackage(
-                        runtimeSpecificPackageIdentifier, packageVersion, author, fragments);
+                        runtimeSpecificPackageIdentifier, version, author, fragments);
                     WriteNuspec(nuspecContents, nuspecDirectory, runtimeSpecificPackageIdentifier);
 
                     var nativeLibraryRelativeDirectory = Path.Combine("runtimes", runtimeIdentifier, "native");
@@ -155,7 +170,7 @@ static class NugetPackageDefiner
                         packageInfos = new();
                         basePackageIdentifierExtensionToPackageInfos.Add(basePackageIdentifier, packageInfos);
                     }
-                    packageInfos.Add(new(runtimeSpecificPackageIdentifier, packageVersion, runtimeIdentifier));
+                    packageInfos.Add(new(runtimeSpecificPackageIdentifier, version, runtimeIdentifier));
                 }
             }
 
@@ -180,7 +195,6 @@ static class NugetPackageDefiner
                         var metaPackageIdentifier = metaName + suffix;
 
                         // HACK: Use first version for meta package version
-                        var version = metaPackageInfos[0].Version;
                         var nuspecDirectory = Path.Combine(outputDirectory, metaPackageIdentifier);
                         var nuspecContents = NuspecDefiner.MetaPackage(metaPackageIdentifier, version, author, metaPackageInfos);
                         WriteNuspec(nuspecContents, nuspecDirectory, metaPackageIdentifier);
@@ -214,7 +228,6 @@ static class NugetPackageDefiner
                 var packageIdentifier = basePackageIdentifier + IdSeparator + IdRuntimePrefix + "json";
 
                 // HACK: Use first version for meta package version
-                var version = infos[0].Version;
                 var nuspecDirectory = Path.Combine(outputDirectory, packageIdentifier);
                 var nuspecContents = NuspecDefiner.MetaPackage(packageIdentifier, version, author);
                 WriteNuspec(nuspecContents, nuspecDirectory, packageIdentifier);
