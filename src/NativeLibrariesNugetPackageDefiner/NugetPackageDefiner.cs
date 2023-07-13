@@ -242,49 +242,72 @@ static class NugetPackageDefiner
         return rootPackageIdentifier + metaSuffix;
     }
 
-    static IEnumerable<(long Offset, long Count)> EstimateSplitSegments(string packageFile, int nativeLibrarySize)
+    /// <summary>
+    /// Estimate split sizes by incrementally zipping blocks of the file
+    /// </summary>
+    static IEnumerable<(long Offset, long Count)> EstimateSplitSegments(string filePath, long fileSize)
     {
-        if (nativeLibrarySize < NugetPackageSizeMax)
+        if (fileSize < NugetPackageSizeMax)
         {
-            yield return (0, nativeLibrarySize);
+            yield return (0, fileSize);
         }
         else
         {
             const int blockSize = 8 * 1024 * 1024;
             const int safeMargin = 16 * 1024;
+            const int maxCompressedSize = NugetPackageSizeMax - blockSize - safeMargin;
 
-            // Estimate split sizes by incrementally gzip'ing the file
-            var buffer = new byte[blockSize];
-            using (var src = new FileStream(packageFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: blockSize))
-            using (var ms = new MemoryStream(NugetPackageSizeMax))
-            // Not using CompressionLevel.SmallestSize due to speed
-            // and to get conservative estimate. TODO: Consider
-            // compress blocks in parallel for speed trading off
-            // worse estimate.
-            using (var gz = new GZipStream(ms, CompressionLevel.Fastest))
+            // Estimate compressed block sizes in parallel for speed.
+            // Occurs a lot of memory pressure, but should be fine.
+            // If not consider pooling.
+            var compressedBlockSizes = EnumerateBlocks(filePath, blockSize)
+                .AsParallel().AsOrdered()
+                .Select(block => (block.Length, EstimateCompressedSize(block)))
+                .ToList();
+
+            var start = 0L;
+            var end = 0L;
+            var accumulatedCompressedBlockSize = 0L;
+            foreach (var (originalBlockSize, compressedBlockSize) in compressedBlockSizes)
             {
-                var prevOffset = 0;
-                var offset = 0;
-                while (offset < nativeLibrarySize)
+                end += originalBlockSize;
+                accumulatedCompressedBlockSize += compressedBlockSize;
+                if (accumulatedCompressedBlockSize > maxCompressedSize)
                 {
-                    var count = src.ReadAtLeast(buffer, blockSize, throwOnEndOfStream: false);
-                    if (count <= 0) { break; }
-
-                    gz.Write(buffer, 0, count);
-                    gz.Flush();
-
-                    offset += count;
-                    if (ms.Length > (NugetPackageSizeMax - blockSize - safeMargin))
-                    {
-                        yield return (prevOffset, offset - prevOffset);
-                        prevOffset = offset;
-                        ms.Position = 0;
-                        ms.SetLength(0);
-                    }
+                    yield return (start, end - start);
+                    start = end;
+                    accumulatedCompressedBlockSize = 0;
                 }
-                yield return (prevOffset, offset - prevOffset);
+            }
+            Debug.Assert(end == fileSize);
+            yield return (start, end - start);
+        }
+    }
+
+    static IEnumerable<Memory<byte>> EnumerateBlocks(string filePath, int blockSize)
+    {
+        using var src = new FileStream(filePath, FileMode.Open,
+            FileAccess.Read, FileShare.Read, bufferSize: blockSize);
+        {
+            while (true)
+            {
+                var buffer = new byte[blockSize];
+                var count = src.ReadAtLeast(buffer, blockSize, throwOnEndOfStream: false);
+                if (count <= 0) { break; }
+                yield return buffer.AsMemory(0, count);
             }
         }
+    }
+
+    static long EstimateCompressedSize(Memory<byte> block)
+    {
+        using var ms = new MemoryStream(NugetPackageSizeMax);
+        // Not using CompressionLevel.SmallestSize due to speed and to get
+        // conservative estimate.
+        using var gz = new GZipStream(ms, CompressionLevel.Fastest);
+        gz.Write(block.Span);
+        gz.Flush();
+        return ms.Length;
     }
 
     static void WriteNuspec(string contents, string directory, string packageIdentifier)
