@@ -66,7 +66,7 @@ static class NugetPackageDefiner
                     var nuspecDirectory = Path.Combine(outputDirectory, runtimeSpecificPackageIdentifier);
                     var packageVersion = version.ToString() + versionSuffix;
 
-                    var splitSegments = EstimateSplitSegments(packageFile, nativeLibrarySize);
+                    var splitSegments = EstimateSplitSegments(packageFile, nativeLibrarySize).ToList();
 
                     var fragments = new List<string>();
                     if (splitSegments.Count > 1)
@@ -242,12 +242,11 @@ static class NugetPackageDefiner
         return rootPackageIdentifier + metaSuffix;
     }
 
-    static List<(long Offset, long Count)> EstimateSplitSegments(string packageFile, int nativeLibrarySize)
+    static IEnumerable<(long Offset, long Count)> EstimateSplitSegments(string packageFile, int nativeLibrarySize)
     {
-        var splitSegments = new List<(long Offset, long Count)>();
         if (nativeLibrarySize < NugetPackageSizeMax)
         {
-            splitSegments.Add((0, nativeLibrarySize));
+            yield return (0, nativeLibrarySize);
         }
         else
         {
@@ -277,16 +276,15 @@ static class NugetPackageDefiner
                     offset += count;
                     if (ms.Length > (NugetPackageSizeMax - blockSize - safeMargin))
                     {
-                        splitSegments.Add((prevOffset, offset - prevOffset));
+                        yield return (prevOffset, offset - prevOffset);
                         prevOffset = offset;
                         ms.Position = 0;
                         ms.SetLength(0);
                     }
                 }
-                splitSegments.Add((prevOffset, offset - prevOffset));
+                yield return (prevOffset, offset - prevOffset);
             }
         }
-        return splitSegments;
     }
 
     static void WriteNuspec(string contents, string directory, string packageIdentifier)
