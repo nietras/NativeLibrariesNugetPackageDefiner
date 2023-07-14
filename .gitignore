@@ -4,6 +4,9 @@
 *.dll.fragment*
 *.so.fragment*
 *.dylib.fragment*
+*.dll.f*
+*.so.f*
+*.dylib.f*
 *.exe
 *.nupkg
 pkgs/

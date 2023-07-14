@@ -14,6 +14,8 @@ static class NugetPackageDefiner
     const char IdSeparator = '.';
     const string IdRuntimePrefix = "runtime.";
     const string VersionFileName = "version.txt";
+    // Needs to be short to try to keep file name length in check
+    const string FragmentPrefix = "f";
 
     // File versioning is a joke, so need some other way to version the files.
     // Perhaps presence of `.version` file can be used and if none try to get from `FileVersionInfo`.
@@ -95,7 +97,7 @@ static class NugetPackageDefiner
                         log($"Splitting '{packageFile}' into {fragmentCount} fragments");
                         for (int fragmentIndex = 0; fragmentIndex < splitSegments.Count; fragmentIndex++)
                         {
-                            var fragment = $"fragment{fragmentIndex:D2}";
+                            var fragment = $"{FragmentPrefix}{fragmentIndex:D2}";
                             var (fragmentOffset, fragmentSize) = splitSegments[fragmentIndex];
 
                             var fragmentNuspecContents = NuspecDefiner.RuntimeSpecificFragmentPackage(
@@ -152,7 +154,9 @@ static class NugetPackageDefiner
 
                         // Write .targets file for MSBuild to use to join fragments
                         var targetsDirectory = Path.Combine(nuspecDirectory, "buildTransitive", targetFrameworkMoniker);
-                        var targetsContents = JoinFragmentsTargetsDefiner.JoinFragmentsTargets(fileName,
+                        // Target name cannot contain '.'
+                        var targetNameSuffix = runtimeSpecificPackageIdentifier.Replace('.', '_');
+                        var targetsContents = JoinFragmentsTargetsDefiner.JoinFragmentsTargets(targetNameSuffix, fileName,
                             joinFragmentsTaskRelativePath, runtimeIdentifier, fragments.Count, nativeLibrarySize, hash);
                         var targetsPath = Path.Combine(targetsDirectory, $"{runtimeSpecificPackageIdentifier}.targets");
                         EnsureDirectoryCreated(targetsDirectory);

@@ -1,0 +1,9 @@
+{
+  "runtimes": {
+    "win-x64": {
+      "NtvLibs.cuda11.curand64_10": {
+        "NtvLibs.cuda11.curand64_10.runtime.win-x64": "11.8.0-preview.1"
+      }
+    },
+  }
+}

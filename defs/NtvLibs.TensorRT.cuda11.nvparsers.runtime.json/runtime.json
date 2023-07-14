@@ -1,0 +1,9 @@
+{
+  "runtimes": {
+    "win-x64": {
+      "NtvLibs.TensorRT.cuda11.nvparsers": {
+        "NtvLibs.TensorRT.cuda11.nvparsers.runtime.win-x64": "8.6.1.6-preview.1"
+      }
+    },
+  }
+}

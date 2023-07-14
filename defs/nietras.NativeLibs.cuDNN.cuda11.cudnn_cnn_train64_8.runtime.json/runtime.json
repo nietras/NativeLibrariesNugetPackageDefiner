@@ -1,9 +1,0 @@
-{
-  "runtimes": {
-    "win-x64": {
-      "nietras.NativeLibs.cuDNN.cuda11.cudnn_cnn_train64_8": {
-        "nietras.NativeLibs.cuDNN.cuda11.cudnn_cnn_train64_8.runtime.win-x64": "8.9.1.23-preview.1"
-      }
-    },
-  }
-}

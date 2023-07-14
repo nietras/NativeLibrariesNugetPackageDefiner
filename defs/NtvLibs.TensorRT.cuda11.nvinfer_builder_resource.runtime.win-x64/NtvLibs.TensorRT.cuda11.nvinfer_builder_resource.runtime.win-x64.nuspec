@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata minClientVersion="5.10">
+    <id>NtvLibs.TensorRT.cuda11.nvinfer_builder_resource.runtime.win-x64</id>
+    <version>8.6.1.6-preview.1</version>
+    <authors>nietras</authors>
+    <owners>nietras</owners>
+    <license type="expression">MIT</license>
+    <description>native library runtime specific package (3 fragments split out to limit nuget package size)</description>
+    <copyright>Copyright © </copyright>
+    <readme>README.md</readme>
+    <dependencies>
+      <dependency id="NtvLibs.TensorRT.cuda11.nvinfer_builder_resource.runtime.win-x64.f00" version="8.6.1.6-preview.1" exclude="Build,Analyzers" />
+      <dependency id="NtvLibs.TensorRT.cuda11.nvinfer_builder_resource.runtime.win-x64.f01" version="8.6.1.6-preview.1" exclude="Build,Analyzers" />
+      <dependency id="NtvLibs.TensorRT.cuda11.nvinfer_builder_resource.runtime.win-x64.f02" version="8.6.1.6-preview.1" exclude="Build,Analyzers" />
+    </dependencies>
+  </metadata>
+</package>

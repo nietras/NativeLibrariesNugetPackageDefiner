@@ -1,0 +1,9 @@
+{
+  "runtimes": {
+    "win-x64": {
+      "NtvLibs.cuda11.cublasLt64_11": {
+        "NtvLibs.cuda11.cublasLt64_11.runtime.win-x64": "11.8.0-preview.1"
+      }
+    },
+  }
+}

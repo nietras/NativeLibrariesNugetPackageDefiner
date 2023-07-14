@@ -2,8 +2,8 @@ namespace NativeLibrariesNugetPackageDefiner;
 
 internal class JoinFragmentsTargetsDefiner
 {
-    public static string JoinFragmentsTargets(string fileToJoin,
-        string taskCSharpRelativePath,
+    public static string JoinFragmentsTargets(string targetNameSuffix,
+        string fileToJoin, string taskCSharpRelativePath,
         string runtimeIdentifier, int fragmentsCount,
         long expectedSize, string expectedHash) =>
     $"""
@@ -16,7 +16,7 @@ internal class JoinFragmentsTargetsDefiner
             </Task>
         </UsingTask>
 
-        <Target Name="RunJoinFragmentsTask"
+        <Target Name="RunJoinFragmentsTask-{targetNameSuffix}"
                 AfterTargets="ResolveReferences"
                 BeforeTargets="PrepareForBuild">
             <JoinFragmentsTask FileToJoinFragmentsFor="$(MSBuildThisFileDirectory)../../runtimes/{runtimeIdentifier}/native/{fileToJoin}"
