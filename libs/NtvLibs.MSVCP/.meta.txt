@@ -1,0 +1,11 @@
+<ROOT>.concrt140
+<ROOT>.msvcp140
+<ROOT>.msvcp140_1
+<ROOT>.msvcp140_2
+<ROOT>.msvcp140_atomic_wait
+<ROOT>.msvcp140_codecvt_ids
+<ROOT>.vcamp140
+<ROOT>.vccorlib140
+<ROOT>.vcomp140
+<ROOT>.vcruntime140
+<ROOT>.vcruntime140_1

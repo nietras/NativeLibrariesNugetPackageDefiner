@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata minClientVersion="5.10">
+    <id>NtvLibs.MSVCP.runtime.arm64</id>
+    <version>14.36.32532-preview.1</version>
+    <authors>nietras</authors>
+    <owners>nietras</owners>
+    <license type="expression">MIT</license>
+    <description>meta package</description>
+    <copyright>Copyright © </copyright>
+    <readme>README.md</readme>
+    <dependencies>
+      <dependency id="NtvLibs.MSVCP.concrt140.runtime.arm64" version="14.36.32532-preview.1" />
+      <dependency id="NtvLibs.MSVCP.msvcp140.runtime.arm64" version="14.36.32532-preview.1" />
+      <dependency id="NtvLibs.MSVCP.msvcp140_1.runtime.arm64" version="14.36.32532-preview.1" />
+      <dependency id="NtvLibs.MSVCP.msvcp140_2.runtime.arm64" version="14.36.32532-preview.1" />
+      <dependency id="NtvLibs.MSVCP.msvcp140_atomic_wait.runtime.arm64" version="14.36.32532-preview.1" />
+      <dependency id="NtvLibs.MSVCP.msvcp140_codecvt_ids.runtime.arm64" version="14.36.32532-preview.1" />
+      <dependency id="NtvLibs.MSVCP.vcamp140.runtime.arm64" version="14.36.32532-preview.1" />
+      <dependency id="NtvLibs.MSVCP.vccorlib140.runtime.arm64" version="14.36.32532-preview.1" />
+      <dependency id="NtvLibs.MSVCP.vcomp140.runtime.arm64" version="14.36.32532-preview.1" />
+      <dependency id="NtvLibs.MSVCP.vcruntime140.runtime.arm64" version="14.36.32532-preview.1" />
+      <dependency id="NtvLibs.MSVCP.vcruntime140_1.runtime.arm64" version="14.36.32532-preview.1" />
+    </dependencies>
+  </metadata>
+</package>

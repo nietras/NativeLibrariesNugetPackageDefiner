@@ -1,10 +1,22 @@
 ﻿// https://github.com/dotnet/ClangSharp/blob/main/tests/ClangSharp.UnitTests/CXTranslationUnitTest.cs
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.ML.OnnxRuntime;
 
 Action<string> log = t => { Trace.WriteLine(t); Console.WriteLine(t); };
 
 log(RuntimeInformation.RuntimeIdentifier);
+
+using var options = new SessionOptions();
+if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+{
+    options.AppendExecutionProvider_CUDA();
+    options.AppendExecutionProvider_Tensorrt();
+}
+using var inference = new InferenceSession("smallsimpledense_0_1_0.onnx");
+
+inference.InputNames.ToList().ForEach(t => log($"Input: {t}"));
+
 //string runtimeIdentifier = RuntimeInformation.RuntimeIdentifier == "win10-x64" ? "win-x64" : "win-x86";
 
 //var name = "basic";
