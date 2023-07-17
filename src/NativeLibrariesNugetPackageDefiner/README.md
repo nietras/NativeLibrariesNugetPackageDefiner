@@ -788,6 +788,9 @@ then end up implicitly forcing the Any CPU build to no longer be frame dependent
 but self-contained? This is all very confusing and hard to understand and not
 the least convey to other developers.
 
+TODO: Address issue if using multiple `RuntimeIdentifiers` line `win-x64;win-x86`,
+then nothing is copied to output folder using the `runtime.json` approach.
+
 ## Links
  * "[Feature] Increase the package size limit on NuGet.org from 250 MB"
    https://github.com/NuGet/NuGetGallery/issues/9473
