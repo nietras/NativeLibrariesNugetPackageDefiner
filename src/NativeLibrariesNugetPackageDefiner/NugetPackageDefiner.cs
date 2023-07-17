@@ -214,6 +214,9 @@ static class NugetPackageDefiner
 
 
             // Define meta packages for easier consuming
+            // TODO: How to define cross-library meta packages?
+            //       Need to move this one loop out, and handle differently?
+            //       What about external dependencies in meta, some way to handle that?
             var suffixToPackageInfos = basePackageIdentifierExtensionToPackageInfos.Values
                 .SelectMany(i => i)
                 .GroupBy(i => i.RuntimeIdentifier)

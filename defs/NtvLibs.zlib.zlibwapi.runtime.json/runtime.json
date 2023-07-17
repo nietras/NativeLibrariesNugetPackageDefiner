@@ -1,0 +1,9 @@
+{
+  "runtimes": {
+    "win-x64": {
+      "NtvLibs.zlib.zlibwapi.runtime.json": {
+        "NtvLibs.zlib.zlibwapi.runtime.win-x64": "1.2.3-preview.1"
+      }
+    },
+  }
+}
