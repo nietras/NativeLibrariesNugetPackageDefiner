@@ -1,0 +1,4 @@
+<ROOT>.onnxruntime
+<ROOT>.onnxruntime_providers_shared
+<ROOT>.onnxruntime_providers_cuda
+<ROOT>.onnxruntime_providers_tensorrt

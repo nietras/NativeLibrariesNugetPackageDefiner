@@ -1,0 +1,14 @@
+{
+  "runtimes": {
+    "linux-x64": {
+      "NtvLibs.OnnxRuntime.CPU.CUDA.Tensorrt.onnxruntime.runtime.json": {
+        "NtvLibs.OnnxRuntime.CPU.CUDA.Tensorrt.onnxruntime.runtime.linux-x64": "1.15.1-preview.1"
+      }
+    },
+    "win-x64": {
+      "NtvLibs.OnnxRuntime.CPU.CUDA.Tensorrt.onnxruntime.runtime.json": {
+        "NtvLibs.OnnxRuntime.CPU.CUDA.Tensorrt.onnxruntime.runtime.win-x64": "1.15.1-preview.1"
+      }
+    },
+  }
+}
