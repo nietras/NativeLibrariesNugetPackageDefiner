@@ -223,13 +223,17 @@ static class NugetPackageDefiner
             while (toProcess.TryDequeue(out var metaPackageAndPackageNames))
             {
                 var (metaName, packageNames) = metaPackageAndPackageNames;
-                var suffixes = suffixToPackageInfos.Keys.ToHashSet();
+                var metaPackageCount = suffixToPackageInfos.Count;
                 foreach (var (suffix, packageInfos) in suffixToPackageInfos)
                 {
                     var metaPackageInfos = packageInfos
                         .Where(info => packageNames.Any(metaPackageName => info.Name.StartsWith(metaPackageName)))
                         .ToArray();
-                    if (metaPackageInfos.Length > 0 && metaPackageInfos.Length == packageNames.Length)
+                    // Doesn't have to be same length as expected since in some
+                    // cases some runtime identifier specific packages don't
+                    // have all of the expected packages e.g. for ONNX runtime
+                    // `android` does not have `onnxruntime_shared_providers`.
+                    if (metaPackageInfos.Length > 0)
                     {
                         var metaPackageIdentifier = metaName + suffix;
 
@@ -248,12 +252,12 @@ static class NugetPackageDefiner
                             infos = new List<PackageInfo>();
                             suffixToPackageInfos.Add(suffix, infos);
                         }
-                        infos.Add(new(metaPackageIdentifier, version, ""));
+                        infos.Add(new(metaPackageIdentifier, version, string.Empty));
 
-                        suffixes.Remove(suffix);
+                        --metaPackageCount;
                     }
                 }
-                if (suffixes.Count > 0)
+                if (metaPackageCount > 0)
                 {
                     // Try again later
                     toProcess.Enqueue(metaPackageAndPackageNames);
