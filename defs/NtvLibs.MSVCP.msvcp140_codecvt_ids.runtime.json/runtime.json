@@ -1,0 +1,19 @@
+{
+  "runtimes": {
+    "arm64": {
+      "NtvLibs.MSVCP.msvcp140_codecvt_ids.runtime.json": {
+        "NtvLibs.MSVCP.msvcp140_codecvt_ids.runtime.arm64": "14.36.32532-preview.1"
+      }
+    },
+    "win-x64": {
+      "NtvLibs.MSVCP.msvcp140_codecvt_ids.runtime.json": {
+        "NtvLibs.MSVCP.msvcp140_codecvt_ids.runtime.win-x64": "14.36.32532-preview.1"
+      }
+    },
+    "win-x86": {
+      "NtvLibs.MSVCP.msvcp140_codecvt_ids.runtime.json": {
+        "NtvLibs.MSVCP.msvcp140_codecvt_ids.runtime.win-x86": "14.36.32532-preview.1"
+      }
+    },
+  }
+}

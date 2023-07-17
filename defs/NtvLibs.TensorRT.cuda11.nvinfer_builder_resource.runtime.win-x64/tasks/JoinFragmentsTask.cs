@@ -35,7 +35,8 @@ public class JoinFragmentsTask : Microsoft.Build.Utilities.Task
             // Add a guid for good measure to ensure unique
             var mutexName = MutexGlobalPrefix + targetsFileName + "-CDC385E6-D34E-480B-AF6D-E6968E48B873";
             using var mutex = new Mutex(false, mutexName, out var createdNew);
-            logDetail($"{(createdNew ? "Created" : "Opened")} named mutex '{mutexName}' so only one at a time is joining fragments for '{targetsFileName}'.");
+            logDetail($"{(createdNew ? "Created" : "Opened")} named mutex '{mutexName}' " +
+                      $"so only one at a time is joining fragments for '{targetsFileName}'.");
             var wait = mutex.WaitOne(60 * 1000);
             if (!wait) { logError($"Wait timed out on named mutex '{mutexName}'"); return false; }
             try

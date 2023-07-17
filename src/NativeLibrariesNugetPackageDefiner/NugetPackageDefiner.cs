@@ -16,6 +16,9 @@ static class NugetPackageDefiner
     const string VersionFileName = "version.txt";
     // Needs to be short to try to keep file name length in check
     const string FragmentPrefix = "f";
+    // On Linux or similar a native library might start with "lib", to unify
+    // naming, remove this from start of package name.
+    const string LibPrefix = "lib";
 
     // File versioning is a joke, so need some other way to version the files.
     // Perhaps presence of `.version` file can be used and if none try to get from `FileVersionInfo`.
@@ -37,7 +40,7 @@ static class NugetPackageDefiner
 
             var metaPackageToPackageNames = Directory.GetFiles(packageDirectory, "*.meta.txt").ToDictionary(
                 f => GetMetaPackageName(f, rootPackageIdentifier),
-                f => File.ReadAllLines(f).Select(l => rootPackageIdentifier + IdSeparator + l).ToArray());
+                f => File.ReadAllLines(f).Select(l => l.Replace("<ROOT>", rootPackageIdentifier)).ToArray());
 
             var packageVersionFilePath = Path.Combine(packageDirectory, VersionFileName);
             var version = File.Exists(packageVersionFilePath)
@@ -64,11 +67,12 @@ static class NugetPackageDefiner
                 var packageFiles = Directory.GetFiles(runtimeIdentifierDirectory, "*.dll");
                 packageFiles = packageFiles.Length == 0 ? Directory.GetFiles(runtimeIdentifierDirectory, "*.so") : packageFiles;
                 packageFiles = packageFiles.Length == 0 ? Directory.GetFiles(runtimeIdentifierDirectory, "*.dylib") : packageFiles;
+                packageFiles = packageFiles.Length == 0 ? Directory.GetFiles(runtimeIdentifierDirectory, "*.aar") : packageFiles;
+                // TODO: Handle iOS where there is no file extension
 
                 foreach (var packageFile in packageFiles)
                 {
                     var fileName = Path.GetFileName(packageFile);
-                    var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(packageFile);
                     var fileInfo = new FileInfo(packageFile);
                     var nativeLibrarySize = fileInfo.Length;
 
@@ -80,7 +84,12 @@ static class NugetPackageDefiner
                     log($"Found '{packageFile}' size {nativeLibrarySize} " +
                         $"file version '{versionInfo.FileVersion}' defined version '{version}'");
 
-                    var basePackageIdentifier = $"{rootPackageIdentifier}.{fileNameWithoutExtension}";
+                    var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(packageFile);
+                    var sanitizedFileNameForPackageIdentifier = fileNameWithoutExtension
+                        .IndexOf(LibPrefix, StringComparison.Ordinal) == 0
+                        ? fileNameWithoutExtension.Substring(LibPrefix.Length) : fileNameWithoutExtension;
+
+                    var basePackageIdentifier = $"{rootPackageIdentifier}.{sanitizedFileNameForPackageIdentifier}";
                     var runtimeSpecificPackageIdentifier = $"{basePackageIdentifier}.{IdRuntimePrefix}{runtimeIdentifier}";
                     var nuspecDirectory = Path.Combine(outputDirectory, runtimeSpecificPackageIdentifier);
 

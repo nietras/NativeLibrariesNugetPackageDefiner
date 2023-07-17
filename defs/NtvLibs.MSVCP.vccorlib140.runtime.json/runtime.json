@@ -1,0 +1,19 @@
+{
+  "runtimes": {
+    "arm64": {
+      "NtvLibs.MSVCP.vccorlib140.runtime.json": {
+        "NtvLibs.MSVCP.vccorlib140.runtime.arm64": "14.36.32532-preview.1"
+      }
+    },
+    "win-x64": {
+      "NtvLibs.MSVCP.vccorlib140.runtime.json": {
+        "NtvLibs.MSVCP.vccorlib140.runtime.win-x64": "14.36.32532-preview.1"
+      }
+    },
+    "win-x86": {
+      "NtvLibs.MSVCP.vccorlib140.runtime.json": {
+        "NtvLibs.MSVCP.vccorlib140.runtime.win-x86": "14.36.32532-preview.1"
+      }
+    },
+  }
+}

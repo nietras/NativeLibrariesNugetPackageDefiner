@@ -1,0 +1,24 @@
+{
+  "runtimes": {
+    "win-arm": {
+      "NtvLibs.OnnxRuntime.CPU.onnxruntime_providers_shared.runtime.json": {
+        "NtvLibs.OnnxRuntime.CPU.onnxruntime_providers_shared.runtime.win-arm": "1.15.1-preview.1"
+      }
+    },
+    "win-arm64": {
+      "NtvLibs.OnnxRuntime.CPU.onnxruntime_providers_shared.runtime.json": {
+        "NtvLibs.OnnxRuntime.CPU.onnxruntime_providers_shared.runtime.win-arm64": "1.15.1-preview.1"
+      }
+    },
+    "win-x64": {
+      "NtvLibs.OnnxRuntime.CPU.onnxruntime_providers_shared.runtime.json": {
+        "NtvLibs.OnnxRuntime.CPU.onnxruntime_providers_shared.runtime.win-x64": "1.15.1-preview.1"
+      }
+    },
+    "win-x86": {
+      "NtvLibs.OnnxRuntime.CPU.onnxruntime_providers_shared.runtime.json": {
+        "NtvLibs.OnnxRuntime.CPU.onnxruntime_providers_shared.runtime.win-x86": "1.15.1-preview.1"
+      }
+    },
+  }
+}

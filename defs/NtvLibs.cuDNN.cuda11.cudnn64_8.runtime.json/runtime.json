@@ -1,7 +1,7 @@
 {
   "runtimes": {
     "win-x64": {
-      "NtvLibs.cuDNN.cuda11.cudnn64_8": {
+      "NtvLibs.cuDNN.cuda11.cudnn64_8.runtime.json": {
         "NtvLibs.cuDNN.cuda11.cudnn64_8.runtime.win-x64": "8.9.1.23-preview.1"
       }
     },
