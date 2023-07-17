@@ -1,0 +1,3 @@
+<ROOT>.cudnn64_8
+<ROOT>.cudnn_ops_infer64_8
+<ROOT>.cudnn_cnn_infer64_8
