@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata minClientVersion="5.10">
+    <id>NtvLibs.cuDNN.cuda11.infer64.runtime.json</id>
+    <version>8.9.1.23-preview.1</version>
+    <authors>nietras</authors>
+    <owners>nietras</owners>
+    <license type="expression">MIT</license>
+    <description>meta package</description>
+    <copyright>Copyright © </copyright>
+    <readme>README.md</readme>
+    <dependencies>
+      <dependency id="NtvLibs.cuDNN.cuda11.cudnn64_8.runtime.json" version="8.9.1.23-preview.1" />
+      <dependency id="NtvLibs.cuDNN.cuda11.cudnn_adv_infer64_8.runtime.json" version="8.9.1.23-preview.1" />
+      <dependency id="NtvLibs.cuDNN.cuda11.cudnn_cnn_infer64_8.runtime.json" version="8.9.1.23-preview.1" />
+      <dependency id="NtvLibs.cuDNN.cuda11.cudnn_ops_infer64_8.runtime.json" version="8.9.1.23-preview.1" />
+    </dependencies>
+  </metadata>
+</package>

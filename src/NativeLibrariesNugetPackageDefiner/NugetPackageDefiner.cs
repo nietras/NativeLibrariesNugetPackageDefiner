@@ -19,6 +19,9 @@ static class NugetPackageDefiner
     // On Linux or similar a native library might start with "lib", to unify
     // naming, remove this from start of package name.
     const string LibPrefix = "lib";
+    // Using "json" as hacked runtime identifier to allow handling
+    // `runtime.json` packages in same way as say `win-x64`.
+    const string JsonRuntimeIdentifier = "json";
 
     // File versioning is a joke, so need some other way to version the files.
     // Perhaps presence of `.version` file can be used and if none try to get from `FileVersionInfo`.
@@ -55,11 +58,6 @@ static class NugetPackageDefiner
             {
                 var runtimeIdentifier = Path.GetRelativePath(packageDirectory, runtimeIdentifierDirectory)
                     .Replace(Path.DirectorySeparatorChar, IdSeparator).Replace(Path.AltDirectorySeparatorChar, IdSeparator);
-
-                //var packageRuntimeSpecificVersionFilePath = Path.Combine(runtimeIdentifierDirectory, VersionFileName);
-                //version = File.Exists(packageRuntimeSpecificVersionFilePath)
-                //    ? File.ReadAllText(packageVersionFilePath) : version;
-
 
                 // A specific runtime identifier should only contain one type of
                 // native library file extension, so searching one at a time if
@@ -188,6 +186,33 @@ static class NugetPackageDefiner
                 }
             }
 
+            // Define runtime agnostic runtime.json meta packages (copy source to be able to add to it)
+            foreach (var (basePackageIdentifier, infos) in basePackageIdentifierExtensionToPackageInfos.ToDictionary(p => p.Key, p => p.Value))
+            {
+                var packageIdentifier = basePackageIdentifier + IdSeparator + IdRuntimePrefix + JsonRuntimeIdentifier;
+
+                // HACK: Use first version for meta package version
+                var nuspecDirectory = Path.Combine(outputDirectory, packageIdentifier);
+                var nuspecContents = NuspecDefiner.MetaPackage(packageIdentifier, version, author);
+                WriteNuspec(nuspecContents, nuspecDirectory, packageIdentifier);
+
+                // Empty file might be needed to silence nuget if no assembly/lib file
+                // Only use in meta package
+                var emptyTargetFrameworkLibDirectory = Path.Combine(nuspecDirectory, $"lib/{targetFrameworkMoniker}/");
+                var emptyTargetFrameworkLibPath = Path.Combine(emptyTargetFrameworkLibDirectory, $"_._");
+                EnsureDirectoryCreated(emptyTargetFrameworkLibDirectory);
+                File.WriteAllText(emptyTargetFrameworkLibPath, string.Empty);
+
+                var readmeContents = "Meta runtime.json package for native library file split into runtime identifier specific packages.";
+                var readmePath = Path.Combine(nuspecDirectory, "README.md");
+                File.WriteAllText(readmePath, readmeContents);
+
+                WriteRuntimeJson(packageIdentifier, infos, Path.Combine(nuspecDirectory, "runtime.json"));
+
+                basePackageIdentifierExtensionToPackageInfos[basePackageIdentifier].Add(new(packageIdentifier, version, JsonRuntimeIdentifier));
+            }
+
+
             // Define meta packages for easier consuming
             var suffixToPackageInfos = basePackageIdentifierExtensionToPackageInfos.Values
                 .SelectMany(i => i)
@@ -198,7 +223,7 @@ static class NugetPackageDefiner
             while (toProcess.TryDequeue(out var metaPackageAndPackageNames))
             {
                 var (metaName, packageNames) = metaPackageAndPackageNames;
-                bool foundPackages = false;
+                var suffixes = suffixToPackageInfos.Keys.ToHashSet();
                 foreach (var (suffix, packageInfos) in suffixToPackageInfos)
                 {
                     var metaPackageInfos = packageInfos
@@ -225,40 +250,16 @@ static class NugetPackageDefiner
                         }
                         infos.Add(new(metaPackageIdentifier, version, ""));
 
-                        foundPackages = true;
-                        break;
+                        suffixes.Remove(suffix);
                     }
                 }
-                if (!foundPackages)
+                if (suffixes.Count > 0)
                 {
                     // Try again later
                     toProcess.Enqueue(metaPackageAndPackageNames);
                 }
             }
 
-            // Define runtime agnostic runtime.json meta packages
-            foreach (var (basePackageIdentifier, infos) in basePackageIdentifierExtensionToPackageInfos)
-            {
-                var packageIdentifier = basePackageIdentifier + IdSeparator + IdRuntimePrefix + "json";
-
-                // HACK: Use first version for meta package version
-                var nuspecDirectory = Path.Combine(outputDirectory, packageIdentifier);
-                var nuspecContents = NuspecDefiner.MetaPackage(packageIdentifier, version, author);
-                WriteNuspec(nuspecContents, nuspecDirectory, packageIdentifier);
-
-                // Empty file might be needed to silence nuget if no assembly/lib file
-                // Only use in meta package
-                var emptyTargetFrameworkLibDirectory = Path.Combine(nuspecDirectory, $"lib/{targetFrameworkMoniker}/");
-                var emptyTargetFrameworkLibPath = Path.Combine(emptyTargetFrameworkLibDirectory, $"_._");
-                EnsureDirectoryCreated(emptyTargetFrameworkLibDirectory);
-                File.WriteAllText(emptyTargetFrameworkLibPath, string.Empty);
-
-                var readmeContents = "Meta runtime.json package for native library file split into runtime identifier specific packages.";
-                var readmePath = Path.Combine(nuspecDirectory, "README.md");
-                File.WriteAllText(readmePath, readmeContents);
-
-                WriteRuntimeJson(packageIdentifier, infos, Path.Combine(nuspecDirectory, "runtime.json"));
-            }
         }
     }
 
