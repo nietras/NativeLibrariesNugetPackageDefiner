@@ -248,7 +248,7 @@ static class NugetPackageDefiner
                 var readmePath = Path.Combine(nuspecDirectory, "README.md");
                 File.WriteAllText(readmePath, readmeContents);
 
-                WriteRuntimeJson(basePackageIdentifier, infos, Path.Combine(nuspecDirectory, "runtime.json"));
+                WriteRuntimeJson(packageIdentifier, infos, Path.Combine(nuspecDirectory, "runtime.json"));
             }
         }
     }
@@ -377,7 +377,7 @@ static class NugetPackageDefiner
 
     // Should any remaining runtimes not currently avaliable as dlls simply be
     // added, to keep this open to being fixed even for old versions in the future?
-    static void WriteRuntimeJson(string basePackageIdentifier, List<PackageInfo> infos, string filePath)
+    static void WriteRuntimeJson(string packageIdentifierRuntimeJson, List<PackageInfo> infos, string filePath)
     {
         var header = "{\r\n  \"runtimes\": {\r\n";
         var footer = "  }\r\n}\r\n";
@@ -388,7 +388,7 @@ static class NugetPackageDefiner
             sb.AppendLine(
                 $$"""
                 "{{info.RuntimeIdentifier}}": {
-                  "{{basePackageIdentifier}}": {
+                  "{{packageIdentifierRuntimeJson}}": {
                     "{{info.Name}}": "{{info.Version}}"
                   }
                 },
