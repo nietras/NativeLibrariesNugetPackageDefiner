@@ -17,8 +17,6 @@ using var inference = new InferenceSession("smallsimpledense_0_1_0.onnx");
 
 inference.InputNames.ToList().ForEach(t => log($"Input: {t}"));
 
-//string runtimeIdentifier = RuntimeInformation.RuntimeIdentifier == "win10-x64" ? "win-x64" : "win-x86";
-
 //var name = "basic";
 //var dir = Path.GetRandomFileName();
 //_ = Directory.CreateDirectory(dir);
