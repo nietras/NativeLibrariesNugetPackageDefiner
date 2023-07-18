@@ -4,7 +4,7 @@
     <id>NtvLibs.cuda11.nppist64_11.runtime.json</id>
     <version>11.8.0-preview.1</version>
     <authors>nietras</authors>
-    <license type="expression">MIT</license>
+    <license type="file">LICENSE.txt</license>
     <description>native library meta package</description>
     <copyright>Copyright © </copyright>
     <readme>README.md</readme>

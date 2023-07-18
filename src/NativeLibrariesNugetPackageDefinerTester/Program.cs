@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML.OnnxRuntime.Tensors;
 
 Action<string> log = t => { Trace.WriteLine(t); Console.WriteLine(t); };
 
@@ -15,7 +16,14 @@ if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
 }
 using var inference = new InferenceSession("smallsimpledense_0_1_0.onnx");
 
-inference.InputNames.ToList().ForEach(t => log($"Input: {t}"));
+var namedOnnxValues = inference.InputMetadata.Select(
+    p => NamedOnnxValue.CreateFromTensor(p.Key, new DenseTensor<float>(p.Value.Dimensions))).ToArray();
+
+foreach (var i in inference.InputNames) { log($"Input: {i}"); };
+
+using var output = inference.Run(namedOnnxValues);
+
+foreach (var o in output) { log($"Output: {o.Name}"); };
 
 //var name = "basic";
 //var dir = Path.GetRandomFileName();

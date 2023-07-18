@@ -4,7 +4,7 @@
     <id>NtvLibs.MSVCP.runtime.win-x86</id>
     <version>14.36.32532-preview.1</version>
     <authors>nietras</authors>
-    <license type="expression">MIT</license>
+    <license type="file">LICENSE.txt</license>
     <description>meta package</description>
     <copyright>Copyright © </copyright>
     <readme>README.md</readme>

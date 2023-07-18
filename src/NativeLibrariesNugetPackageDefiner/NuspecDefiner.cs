@@ -13,7 +13,7 @@ public static class NuspecDefiner
         <id>{packageId}</id>
         <version>{version}</version>
         <authors>{author}</authors>
-        <license type="expression">MIT</license>
+        <license type="file">LICENSE.txt</license>
         <description>native library runtime specific package{(fragments.Count > 0 ? $" ({fragments.Count} fragments split out to limit nuget package size)" : string.Empty)}</description>
         <copyright>Copyright © </copyright>
         <readme>README.md</readme>
@@ -31,7 +31,7 @@ public static class NuspecDefiner
         <id>{FragmentPackageId(packageId, fragment)}</id>
         <version>{version}</version>
         <authors>{author}</authors>
-        <license type="expression">MIT</license>
+        <license type="file">LICENSE.txt</license>
         <description>native library runtime specific fragment {index}/{lastIndex} package</description>
         <copyright>Copyright © </copyright>
         <readme>README.md</readme>
@@ -47,7 +47,7 @@ public static class NuspecDefiner
         <id>{packageId}</id>
         <version>{version}</version>
         <authors>{author}</authors>
-        <license type="expression">MIT</license>
+        <license type="file">LICENSE.txt</license>
         <description>native library meta package</description>
         <copyright>Copyright © </copyright>
         <readme>README.md</readme>
@@ -66,7 +66,7 @@ public static class NuspecDefiner
         <id>{packageId}</id>
         <version>{version}</version>
         <authors>{author}</authors>
-        <license type="expression">MIT</license>
+        <license type="file">LICENSE.txt</license>
         <description>meta package</description>
         <copyright>Copyright © </copyright>
         <readme>README.md</readme>

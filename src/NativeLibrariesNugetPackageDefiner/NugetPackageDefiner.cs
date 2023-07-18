@@ -8,10 +8,13 @@ using System.Text;
 
 namespace NativeLibrariesNugetPackageDefiner;
 
-static class NugetPackageDefiner
+public static class NugetPackageDefiner
 {
     const string AuthorFileName = "author.txt";
     const string VersionFileName = "version.txt";
+    const string ReadmeFileName = "README.md";
+    const string LicenseFileName = "LICENSE.txt";
+    const string ThirdPartyNoticesFileName = "ThirdPartyNotices.txt";
 
     const int NugetPackageSizeMax = 250_000_000;
     const char IdSeparator = '.';
@@ -25,22 +28,19 @@ static class NugetPackageDefiner
     // `runtime.json` packages in same way as say `win-x64`.
     const string JsonRuntimeIdentifier = "json";
 
-    // File versioning is a joke, so need some other way to version the files.
-    // Perhaps presence of `.version` file can be used and if none try to get from `FileVersionInfo`.
-    // get-childitem * -include *.dll,*.exe | foreach-object { "{0}`t{1}" -f $_.Name, [System.Diagnostics.FileVersionInfo]::GetVersionInfo($_).FileVersion }
-
-    // Probably put in directory structure
-    //const string LicenseText = "This software contains source code provided by NVIDIA Corporation.\r\nThe full cuDNN license agreement can be found here.\r\nhttps://docs.nvidia.com/deeplearning/cudnn/sla/index.html";
+    const string ReadmeContentsRuntimeSpecificFileFragment = "Runtime identifier specific fragment package for native library file too big for a single package on nuget.";
+    const string ReadmeContentsRuntimeSpecificFile = "Runtime identifier specific package for native library file. Possibly split into multiple fragments or parts if size too large for nuget.";
+    const string ReadmeContentsMetaRuntimeJson = "Meta runtime.json package for native library file split into runtime identifier specific packages.";
+    const string ReadmeContentsMeta = "Meta package for a set of native libraries.";
 
     public static void FindNativeLibrariesThenDefinePackages(
-        string nativeLibsForPackagingDirectory,
-        string targetFrameworkMoniker,
-        string outputDirectory, Action<string> log)
+        string inputDirectory, string targetFrameworkMoniker, string outputDirectory,
+        Action<string> log)
     {
-        var packageDirectories = Directory.GetDirectories(nativeLibsForPackagingDirectory);
+        var packageDirectories = Directory.GetDirectories(inputDirectory);
         foreach (var packageDirectory in packageDirectories)
         {
-            var rootPackageIdentifier = Path.GetRelativePath(nativeLibsForPackagingDirectory, packageDirectory)
+            var rootPackageIdentifier = Path.GetRelativePath(inputDirectory, packageDirectory)
                 .Replace(Path.DirectorySeparatorChar, IdSeparator).Replace(Path.AltDirectorySeparatorChar, IdSeparator);
 
             var metaPackageToPackageNames = Directory.GetFiles(packageDirectory, "*.meta.txt").ToDictionary(
@@ -48,10 +48,17 @@ static class NugetPackageDefiner
                 f => File.ReadAllLines(f).Select(l => l.Replace("<ROOT>", rootPackageIdentifier)).ToArray());
 
             var author = CheckExistsReadAllText(packageDirectory, AuthorFileName,
-                rootPackageIdentifier, "package author");
+                rootPackageIdentifier, "contain a single line with package author");
 
             var version = CheckExistsReadAllText(packageDirectory, VersionFileName,
-                rootPackageIdentifier, "package version");
+                rootPackageIdentifier, "contain a single line with package version");
+
+            var license = CheckExistsReadAllText(packageDirectory, LicenseFileName,
+                rootPackageIdentifier, "contain license text");
+
+            var thirdPartyNoticesFilePath = Path.Combine(packageDirectory, ThirdPartyNoticesFileName);
+            var thirdPartyNotices = File.Exists(thirdPartyNoticesFilePath)
+                ? File.ReadAllText(thirdPartyNoticesFilePath) : null;
 
             var basePackageIdentifierExtensionToPackageInfos = new Dictionary<string, List<PackageInfo>>();
 
@@ -125,9 +132,9 @@ static class NugetPackageDefiner
                             EnsureDirectoryCreated(fragmentDirectory);
                             CopyFileSegmentTo(packageFile, fragmentOffset, fragmentSize, fragmentPath);
 
-                            var fragmentReadmeContents = "Runtime identifier specific fragment package for native library file too big for a single package on nuget.";
-                            var fragmentReadmePath = Path.Combine(fragmentPackageDirectory, "README.md");
-                            File.WriteAllText(fragmentReadmePath, fragmentReadmeContents);
+                            var fragmentReadmeContents = ReadmeContentsRuntimeSpecificFileFragment;
+                            WriteReadmeLicenseMaybeThirdPartyNotices(fragmentPackageDirectory,
+                                fragmentReadmeContents, license, thirdPartyNotices);
 
                             fragments.Add(fragment);
                         }
@@ -149,9 +156,9 @@ static class NugetPackageDefiner
                     EnsureDirectoryCreated(nativeLibraryDirectory);
                     CopyFileSegmentTo(packageFile, mainPackageOffset, mainPackageSize, nativeLibraryPath);
 
-                    var readmeContents = "Runtime identifier specific package for native library file. Possibly split into multiple fragments or parts if size too large for nuget.";
-                    var readmePath = Path.Combine(nuspecDirectory, "README.md");
-                    File.WriteAllText(readmePath, readmeContents);
+                    var readmeContents = ReadmeContentsRuntimeSpecificFile;
+                    WriteReadmeLicenseMaybeThirdPartyNotices(nuspecDirectory,
+                        readmeContents, license, thirdPartyNotices);
 
                     if (fragments.Count > 0)
                     {
@@ -205,9 +212,9 @@ static class NugetPackageDefiner
                 EnsureDirectoryCreated(emptyTargetFrameworkLibDirectory);
                 File.WriteAllText(emptyTargetFrameworkLibPath, string.Empty);
 
-                var readmeContents = "Meta runtime.json package for native library file split into runtime identifier specific packages.";
-                var readmePath = Path.Combine(nuspecDirectory, "README.md");
-                File.WriteAllText(readmePath, readmeContents);
+                var readmeContents = ReadmeContentsMetaRuntimeJson;
+                WriteReadmeLicenseMaybeThirdPartyNotices(nuspecDirectory,
+                    readmeContents, license, thirdPartyNotices);
 
                 WriteRuntimeJson(packageIdentifier, infos, Path.Combine(nuspecDirectory, "runtime.json"));
 
@@ -247,9 +254,9 @@ static class NugetPackageDefiner
                         var nuspecContents = NuspecDefiner.MetaPackage(metaPackageIdentifier, version, author, metaPackageInfos);
                         WriteNuspec(nuspecContents, nuspecDirectory, metaPackageIdentifier);
 
-                        var readmeContents = "Meta package for a set of native libraries.";
-                        var readmePath = Path.Combine(nuspecDirectory, "README.md");
-                        File.WriteAllText(readmePath, readmeContents);
+                        var readmeContents = ReadmeContentsMeta;
+                        WriteReadmeLicenseMaybeThirdPartyNotices(nuspecDirectory,
+                            readmeContents, license, thirdPartyNotices);
 
                         // Add to suffixes to process
                         if (!suffixToPackageInfos.TryGetValue(suffix, out var infos))
@@ -268,7 +275,6 @@ static class NugetPackageDefiner
                     toProcess.Enqueue(metaPackageAndPackageNames);
                 }
             }
-
         }
     }
 
@@ -279,7 +285,7 @@ static class NugetPackageDefiner
         var version = File.Exists(filePath)
             ? File.ReadAllText(filePath)
             : throw new ArgumentException($"No '{fileName}' found for '{rootPackageIdentifier}'. " +
-                $"This file must be present and contain a single line with {details}.");
+                $"This file must be present and {details}.");
         return version;
     }
 
@@ -395,6 +401,20 @@ static class NugetPackageDefiner
         using var stream = File.OpenRead(path);
         using var hash = System.Security.Cryptography.SHA256.Create();
         return BitConverter.ToString(hash.ComputeHash(stream));
+    }
+
+    static void WriteReadmeLicenseMaybeThirdPartyNotices(
+        string packageDirectory, string readmeContents, string licenseContents, string? thirdPartyNoticesContents)
+    {
+        var readmePath = Path.Combine(packageDirectory, ReadmeFileName);
+        File.WriteAllText(readmePath, readmeContents);
+        var licensePath = Path.Combine(packageDirectory, LicenseFileName);
+        File.WriteAllText(licensePath, licenseContents);
+        if (thirdPartyNoticesContents is not null)
+        {
+            var thirdPartyNoticesPath = Path.Combine(packageDirectory, ThirdPartyNoticesFileName);
+            File.WriteAllText(thirdPartyNoticesPath, thirdPartyNoticesContents);
+        }
     }
 
     static string ReadResourceNameEndsWith(string endString)
