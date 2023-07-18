@@ -10,10 +10,12 @@ namespace NativeLibrariesNugetPackageDefiner;
 
 static class NugetPackageDefiner
 {
+    const string AuthorFileName = "author.txt";
+    const string VersionFileName = "version.txt";
+
     const int NugetPackageSizeMax = 250_000_000;
     const char IdSeparator = '.';
     const string IdRuntimePrefix = "runtime.";
-    const string VersionFileName = "version.txt";
     // Needs to be short to try to keep file name length in check
     const string FragmentPrefix = "f";
     // On Linux or similar a native library might start with "lib", to unify
@@ -32,7 +34,7 @@ static class NugetPackageDefiner
 
     public static void FindNativeLibrariesThenDefinePackages(
         string nativeLibsForPackagingDirectory,
-        string author, string targetFrameworkMoniker,
+        string targetFrameworkMoniker,
         string outputDirectory, Action<string> log)
     {
         var packageDirectories = Directory.GetDirectories(nativeLibsForPackagingDirectory);
@@ -45,11 +47,11 @@ static class NugetPackageDefiner
                 f => GetMetaPackageName(f, rootPackageIdentifier),
                 f => File.ReadAllLines(f).Select(l => l.Replace("<ROOT>", rootPackageIdentifier)).ToArray());
 
-            var packageVersionFilePath = Path.Combine(packageDirectory, VersionFileName);
-            var version = File.Exists(packageVersionFilePath)
-                ? File.ReadAllText(packageVersionFilePath)
-                : throw new ArgumentException($"No {VersionFileName} found for '{rootPackageIdentifier}'. " +
-                    $"This file must be present and contain a single line with package version.");
+            var author = CheckExistsReadAllText(packageDirectory, AuthorFileName,
+                rootPackageIdentifier, "package author");
+
+            var version = CheckExistsReadAllText(packageDirectory, VersionFileName,
+                rootPackageIdentifier, "package version");
 
             var basePackageIdentifierExtensionToPackageInfos = new Dictionary<string, List<PackageInfo>>();
 
@@ -75,8 +77,8 @@ static class NugetPackageDefiner
                     var nativeLibrarySize = fileInfo.Length;
 
                     // Native libraries are very rarely properly versioned, so
-                    // this is just to be able to double check against, defined
-                    // version in version file name.
+                    // this is just to be able to double check against the
+                    // defined version in version file.
                     var versionInfo = FileVersionInfo.GetVersionInfo(packageFile);
 
                     log($"Found '{packageFile}' size {nativeLibrarySize} " +
@@ -91,7 +93,7 @@ static class NugetPackageDefiner
                     var runtimeSpecificPackageIdentifier = $"{basePackageIdentifier}.{IdRuntimePrefix}{runtimeIdentifier}";
                     var nuspecDirectory = Path.Combine(outputDirectory, runtimeSpecificPackageIdentifier);
 
-                    var splitSegments = EstimateSplitSegments(packageFile, nativeLibrarySize).ToList();
+                    var splitSegments = EstimateSplitSegments(packageFile, nativeLibrarySize, log).ToList();
 
                     var fragments = new List<string>();
                     if (splitSegments.Count > 1)
@@ -270,6 +272,17 @@ static class NugetPackageDefiner
         }
     }
 
+    static string CheckExistsReadAllText(string directory, string fileName,
+        string rootPackageIdentifier, string details)
+    {
+        var filePath = Path.Combine(directory, fileName);
+        var version = File.Exists(filePath)
+            ? File.ReadAllText(filePath)
+            : throw new ArgumentException($"No '{fileName}' found for '{rootPackageIdentifier}'. " +
+                $"This file must be present and contain a single line with {details}.");
+        return version;
+    }
+
     static string GetMetaPackageName(string filePath, string rootPackageIdentifier)
     {
         var fileName = Path.GetFileName(filePath.Replace(".meta.txt", ""));
@@ -280,7 +293,7 @@ static class NugetPackageDefiner
     /// <summary>
     /// Estimate split sizes by incrementally zipping blocks of the file
     /// </summary>
-    static IEnumerable<(long Offset, long Count)> EstimateSplitSegments(string filePath, long fileSize)
+    static IEnumerable<(long Offset, long Count)> EstimateSplitSegments(string filePath, long fileSize, Action<string> log)
     {
         if (fileSize < NugetPackageSizeMax)
         {
@@ -288,6 +301,8 @@ static class NugetPackageDefiner
         }
         else
         {
+            log($"Estimating if splitting needed by compressing blocks for '{filePath}'");
+
             const int blockSize = 8 * 1024 * 1024;
             const int safeMargin = 16 * 1024;
             const int maxCompressedSize = NugetPackageSizeMax - blockSize - safeMargin;

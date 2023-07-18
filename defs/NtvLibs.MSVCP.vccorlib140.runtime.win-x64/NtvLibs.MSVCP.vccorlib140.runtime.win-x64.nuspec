@@ -4,7 +4,6 @@
     <id>NtvLibs.MSVCP.vccorlib140.runtime.win-x64</id>
     <version>14.36.32532-preview.1</version>
     <authors>nietras</authors>
-    <owners>nietras</owners>
     <license type="expression">MIT</license>
     <description>native library runtime specific package</description>
     <copyright>Copyright © </copyright>

@@ -4,7 +4,6 @@
     <id>NtvLibs.TensorRT.cuda11.nvinfer_dispatch.runtime.win-x64</id>
     <version>8.6.1.6-preview.1</version>
     <authors>nietras</authors>
-    <owners>nietras</owners>
     <license type="expression">MIT</license>
     <description>native library runtime specific package</description>
     <copyright>Copyright © </copyright>

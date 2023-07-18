@@ -4,7 +4,6 @@
     <id>NtvLibs.zlib.zlibwapi.runtime.json</id>
     <version>1.2.3-preview.1</version>
     <authors>nietras</authors>
-    <owners>nietras</owners>
     <license type="expression">MIT</license>
     <description>native library meta package</description>
     <copyright>Copyright © </copyright>

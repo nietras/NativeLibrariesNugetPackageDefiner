@@ -4,7 +4,6 @@
     <id>NtvLibs.cuda11.cublasLt64_11.runtime.win-x64.f01</id>
     <version>11.8.0-preview.1</version>
     <authors>nietras</authors>
-    <owners>nietras</owners>
     <license type="expression">MIT</license>
     <description>native library runtime specific fragment 1/2 package</description>
     <copyright>Copyright © </copyright>
