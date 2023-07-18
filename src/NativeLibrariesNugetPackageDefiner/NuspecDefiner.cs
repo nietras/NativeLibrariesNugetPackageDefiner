@@ -13,7 +13,6 @@ public static class NuspecDefiner
         <id>{packageId}</id>
         <version>{version}</version>
         <authors>{author}</authors>
-        <owners>{author}</owners>
         <license type="expression">MIT</license>
         <description>native library runtime specific package{(fragments.Count > 0 ? $" ({fragments.Count} fragments split out to limit nuget package size)" : string.Empty)}</description>
         <copyright>Copyright © </copyright>
@@ -32,7 +31,6 @@ public static class NuspecDefiner
         <id>{FragmentPackageId(packageId, fragment)}</id>
         <version>{version}</version>
         <authors>{author}</authors>
-        <owners>{author}</owners>
         <license type="expression">MIT</license>
         <description>native library runtime specific fragment {index}/{lastIndex} package</description>
         <copyright>Copyright © </copyright>
@@ -49,7 +47,6 @@ public static class NuspecDefiner
         <id>{packageId}</id>
         <version>{version}</version>
         <authors>{author}</authors>
-        <owners>{author}</owners>
         <license type="expression">MIT</license>
         <description>native library meta package</description>
         <copyright>Copyright © </copyright>
@@ -69,7 +66,6 @@ public static class NuspecDefiner
         <id>{packageId}</id>
         <version>{version}</version>
         <authors>{author}</authors>
-        <owners>{author}</owners>
         <license type="expression">MIT</license>
         <description>meta package</description>
         <copyright>Copyright © </copyright>
