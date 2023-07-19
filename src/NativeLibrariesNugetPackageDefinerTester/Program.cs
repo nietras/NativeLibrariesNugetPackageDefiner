@@ -49,13 +49,13 @@ var runtimesDir = Path.Combine(Environment.CurrentDirectory, runtimeRelativeDir)
 // AddDllDirectory does not work here for some reason
 //var handle = AddDllDirectory(runtimesDir);
 //log($"AddDllDirectory: {handle}");
-
 // Instead add runtimes directory directly to PATH environment variable
 const string PATH = nameof(PATH);
 var pathEnvVar = Environment.GetEnvironmentVariable(PATH);
 pathEnvVar += $";{runtimesDir}";
 Environment.SetEnvironmentVariable(PATH, pathEnvVar);
 
+// Loads fine without PATH or AddDllDirectory, but we are not in charge of loading these
 //NativeLibrary.Load(@"nvinfer_builder_resource.dll", typeof(Program).Assembly, DllImportSearchPath.SafeDirectories);
 //NativeLibrary.Load(@"cudnn_cnn_infer64_8.dll", typeof(Program).Assembly, DllImportSearchPath.SafeDirectories);
 
