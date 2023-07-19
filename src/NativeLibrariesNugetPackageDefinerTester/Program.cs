@@ -1,5 +1,4 @@
-﻿// https://github.com/dotnet/ClangSharp/blob/main/tests/ClangSharp.UnitTests/CXTranslationUnitTest.cs
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
@@ -7,24 +6,90 @@ using Microsoft.ML.OnnxRuntime.Tensors;
 Action<string> log = t => { Trace.WriteLine(t); Console.WriteLine(t); };
 
 log(RuntimeInformation.RuntimeIdentifier);
+log(Environment.CurrentDirectory);
+
+// https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#lazy-loading
+// Lazy Loading delays loading of CUDA modules and kernels from program
+// initialization closer to kernels execution. If a program does not use every
+// single kernel it has included, then some kernels will be loaded
+// unnecessarily. This is very common, especially if you include any libraries.
+// Most of the time, programs only use a small amount of kernels from libraries
+// they include.
+//
+// Thanks to Lazy Loading, programs are able to only load kernels they are
+// actually going to use, saving time on initialization. This reduces memory
+// overhead, both on GPU memory and host memory
+//
+// Lazy Loading is enabled by setting the CUDA_MODULE_LOADING environment
+// variable to LAZY.
+//
+// Firstly, CUDA Runtime will no longer load all modules during program
+// initialization, with the exception of modules containing managed variables.
+// Each module will be loaded on first usage of a variable or a kernel from that
+// module. This optimization is only relevant to CUDA Runtime users, CUDA Driver
+// users are unaffected. This optimization shipped in CUDA 11.8.
+//
+// Secondly, loading a module (cuModuleLoad*() family of functions) will not be
+// loading kernels immediately, instead it will delay loading of a kernel until
+// cuModuleGetFunction() is called.There are certain exceptions here, some
+// kernels have to be loaded during cuModuleLoad*(), such as kernels of which
+// pointers are stored in global variables. This optimization is relevant to
+// both CUDA Runtime and CUDA Driver users. CUDA Runtime will only call
+// cuModuleGetFunction() when a kernel is used/referenced for the first time.
+// This optimization shipped in CUDA 11.7.
+//
+// Both of these optimizations are designed to be invisible to the user,
+// assuming CUDA Programming Model is followed.
+Environment.SetEnvironmentVariable("CUDA_MODULE_LOADING", "LAZY");
+
+var arch = Environment.Is64BitProcess ? @"x64" : @"x86";
+var runtimeRelativeDir = $"runtimes/win-{arch}/native";
+var runtimesDir = Path.Combine(Environment.CurrentDirectory, runtimeRelativeDir);
+
+// AddDllDirectory does not work here for some reason
+//var handle = AddDllDirectory(runtimesDir);
+//log($"AddDllDirectory: {handle}");
+
+// Instead add runtimes directory directly to PATH environment variable
+const string PATH = nameof(PATH);
+var pathEnvVar = Environment.GetEnvironmentVariable(PATH);
+pathEnvVar += $";{runtimesDir}";
+Environment.SetEnvironmentVariable(PATH, pathEnvVar);
+
+//NativeLibrary.Load(@"nvinfer_builder_resource.dll", typeof(Program).Assembly, DllImportSearchPath.SafeDirectories);
+//NativeLibrary.Load(@"cudnn_cnn_infer64_8.dll", typeof(Program).Assembly, DllImportSearchPath.SafeDirectories);
+
+var modelPath = "smallsimpledense_0_1_0.onnx";
+
+var env = OrtEnv.Instance;
+//NativeApiStatus.VerifySuccess(NativeMethods.OrtCreateEnv(LogLevel.Warning, @"CSharpOnnxRuntime", out var handle));
+//var bytes = File.ReadAllBytes(modelPath);
+//var availableProviders = InferenceSessionFactory.FindAvailablePrioritizedExecutionProviders(
+//    ExecutionProviders.DefaultPrioritizedList)
+//    .ToArray();
 
 using var options = new SessionOptions();
 if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
 {
-    options.AppendExecutionProvider_CUDA();
     options.AppendExecutionProvider_Tensorrt();
+    options.AppendExecutionProvider_CUDA();
 }
-using var inference = new InferenceSession("smallsimpledense_0_1_0.onnx");
+using var inference = new InferenceSession(modelPath, options);
 
 var namedOnnxValues = inference.InputMetadata.Select(
     p => NamedOnnxValue.CreateFromTensor(p.Key, new DenseTensor<float>(p.Value.Dimensions))).ToArray();
 
-foreach (var i in inference.InputNames) { log($"Input: {i}"); };
+foreach (var i in inference.InputMetadata.Keys) { log($"Input: {i}"); };
 
 using var output = inference.Run(namedOnnxValues);
 
 foreach (var o in output) { log($"Output: {o.Name}"); };
 
+[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+static extern int AddDllDirectory(string newDirectory);
+
+// https://github.com/dotnet/ClangSharp/blob/main/tests/ClangSharp.UnitTests/CXTranslationUnitTest.cs
 //var name = "basic";
 //var dir = Path.GetRandomFileName();
 //_ = Directory.CreateDirectory(dir);
