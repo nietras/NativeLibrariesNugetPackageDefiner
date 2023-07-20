@@ -27,6 +27,10 @@ public static class NugetPackageDefiner
     // Using "json" as hacked runtime identifier to allow handling
     // `runtime.json` packages in same way as say `win-x64`.
     const string JsonRuntimeIdentifier = "json";
+    // To document native libraries found and being packaged, without adding
+    // them to git write size of native library found to a file next to where
+    // the file found.
+    const string SizeFileNameSuffix = ".size.txt";
 
     const string ReadmeContentsRuntimeSpecificFileFragment = "Runtime identifier specific fragment package for native library file too big for a single package on nuget.";
     const string ReadmeContentsRuntimeSpecificFile = "Runtime identifier specific package for native library file. Possibly split into multiple fragments or parts if size too large for nuget.";
@@ -90,6 +94,9 @@ public static class NugetPackageDefiner
 
                     log($"Found '{packageFile}' size {nativeLibrarySize} " +
                         $"file version '{versionInfo.FileVersion}' defined version '{version}'");
+
+                    var nativeLibrarySizeFilePath = Path.Combine(runtimeIdentifierDirectory, fileName + SizeFileNameSuffix);
+                    File.WriteAllText(nativeLibrarySizeFilePath, nativeLibrarySize.ToString());
 
                     var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(packageFile);
                     var sanitizedFileNameForPackageIdentifier = fileNameWithoutExtension

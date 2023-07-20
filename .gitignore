@@ -2,10 +2,6 @@
 *.so
 *.dylib
 *.aar
-*.dll.*
-*.so.*
-*.dylib.*
-*.aar.*
 *.dll.f*
 *.so.f*
 *.dylib.f*
