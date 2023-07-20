@@ -10,6 +10,8 @@
 
     <Version>0.1.0</Version>
     <InformationalVersion>0.1.0-preview.1</InformationalVersion>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

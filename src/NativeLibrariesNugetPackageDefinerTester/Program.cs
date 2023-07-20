@@ -85,9 +85,9 @@ using var output = inference.Run(namedOnnxValues);
 
 foreach (var o in output) { log($"Output: {o.Name}"); };
 
-[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-static extern int AddDllDirectory(string newDirectory);
+//[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+//[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+//static extern int AddDllDirectory(string newDirectory);
 
 // https://github.com/dotnet/ClangSharp/blob/main/tests/ClangSharp.UnitTests/CXTranslationUnitTest.cs
 //var name = "basic";

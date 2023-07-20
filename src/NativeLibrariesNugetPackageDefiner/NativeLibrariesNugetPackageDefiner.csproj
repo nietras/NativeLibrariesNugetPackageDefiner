@@ -6,7 +6,39 @@
     <Nullable>enable</Nullable>
     <Version>0.1.0</Version>
     <LangVersion>11.0</LangVersion>
+    <AssemblyName>dotnet-ntvlibpkgdef</AssemblyName>
+
+    <IsTrimmable>true</IsTrimmable>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EnableAOTAnalyzer>true</EnableAOTAnalyzer>
+
+    <Description>Native libraries nuget package definer tool.</Description>
+
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>$(AssemblyName)</ToolCommandName>
+
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageTags>onnx;nuget;native;library;runtime;fragments;dll;so;dylib</PackageTags>
+    <PackageIcon>Icon.jpg</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIconUrl>https://raw.github.com/nietras/NativeLibrariesNugetPackageDefiner/main/Icon.jpg</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/nietras/NativeLibrariesNugetPackageDefiner/</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/nietras/NativeLibrariesNugetPackageDefiner/releases</PackageReleaseNotes>
+    <PackageLicenseExpression>MS-PL OR Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <RepositoryUrl>https://github.com/nietras/NativeLibrariesNugetPackageDefiner/</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>false</EmbedUntrackedSources>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../Icon.jpg" Pack="true" PackagePath="" />
+    <None Include="../../README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="../NativeLibrariesNugetPackageTasks/JoinFragmentsTask.cs">
