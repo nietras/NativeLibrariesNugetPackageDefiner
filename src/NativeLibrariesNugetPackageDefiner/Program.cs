@@ -25,4 +25,4 @@ rootCommand.SetHandler((inputDirectory, outputDirectory) =>
     },
     inputDirectoryArgument, outputDirectoryArgument);
 
-return await rootCommand.InvokeAsync(args);
+return await rootCommand.InvokeAsync(args).ConfigureAwait(false);

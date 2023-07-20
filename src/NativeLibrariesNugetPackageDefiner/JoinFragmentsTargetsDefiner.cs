@@ -1,6 +1,6 @@
 namespace NativeLibrariesNugetPackageDefiner;
 
-internal class JoinFragmentsTargetsDefiner
+static class JoinFragmentsTargetsDefiner
 {
     public static string JoinFragmentsTargets(string targetNameSuffix,
         string fileToJoin, string taskCSharpRelativePath,

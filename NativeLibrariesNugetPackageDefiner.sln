@@ -23,6 +23,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{08E96163-0
 		THIRD-PARTY-NOTICES = THIRD-PARTY-NOTICES
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E568445B-9BB2-4129-ACCD-74DB6CEB6F0B}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+		src\OutputBuildProject.props = src\OutputBuildProject.props
+		src\OutputBuildProps.props = src\OutputBuildProps.props
+		src\OutputBuildTargets.props = src\OutputBuildTargets.props
+		src\SourceLink.GitHub.props = src\SourceLink.GitHub.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

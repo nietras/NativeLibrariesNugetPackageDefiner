@@ -4,6 +4,11 @@ using System.Linq;
 using System.Threading;
 using Microsoft.Build.Framework;
 
+#pragma warning disable CA1050
+#pragma warning disable CA8618
+#pragma warning disable CS8618
+#pragma warning disable CA1031
+
 // BAD IDEA TO USE THIS FROM A NUGET PACKAGE SO INSTEAD JUST TRYING TO USE THE
 // TASK TO AUTHOR THE SEPARATE CODE FILE FOR THE MSBUILD TARGETS FILE BY
 // REFERENCING THIS FILE DIRECTLY. MAKES DEV LOOP FASTER AND EASIER.

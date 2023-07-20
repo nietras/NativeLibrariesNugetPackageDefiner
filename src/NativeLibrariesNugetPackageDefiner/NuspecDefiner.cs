@@ -3,7 +3,7 @@ using System.Text;
 
 namespace NativeLibrariesNugetPackageDefiner;
 
-public static class NuspecDefiner
+static class NuspecDefiner
 {
     public static string RuntimeSpecificPackage(string packageId, string version, string author, IReadOnlyCollection<string> fragments) =>
     $"""

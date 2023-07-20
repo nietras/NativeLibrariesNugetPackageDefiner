@@ -8,7 +8,7 @@ using System.Text;
 
 namespace NativeLibrariesNugetPackageDefiner;
 
-public static class NugetPackageDefiner
+static class NugetPackageDefiner
 {
     const string AuthorFileName = "author.txt";
     const string VersionFileName = "version.txt";
@@ -49,7 +49,7 @@ public static class NugetPackageDefiner
 
             var metaPackageToPackageNames = Directory.GetFiles(packageDirectory, "*.meta.txt").ToDictionary(
                 f => GetMetaPackageName(f, rootPackageIdentifier),
-                f => File.ReadAllLines(f).Select(l => l.Replace("<ROOT>", rootPackageIdentifier)).ToArray());
+                f => File.ReadAllLines(f).Select(l => l.Replace("<ROOT>", rootPackageIdentifier, StringComparison.OrdinalIgnoreCase)).ToArray());
 
             var author = CheckExistsReadAllText(packageDirectory, AuthorFileName,
                 rootPackageIdentifier, "contain a single line with package author");
