@@ -1,4 +1,0 @@
-<ROOT>.cudnn64_8
-<ROOT>.cudnn_ops_train64_8
-<ROOT>.cudnn_cnn_train64_8
-<ROOT>.cudnn_adv_train64_8

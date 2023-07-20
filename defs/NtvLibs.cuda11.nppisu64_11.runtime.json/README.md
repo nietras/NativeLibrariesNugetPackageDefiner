@@ -1,1 +1,0 @@
-Meta runtime.json package for native library file split into runtime identifier specific packages.

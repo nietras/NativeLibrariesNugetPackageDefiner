@@ -1,9 +1,0 @@
-{
-  "runtimes": {
-    "win-x64": {
-      "NtvLibs.cuda11.nvrtc64_112_0.runtime.json": {
-        "NtvLibs.cuda11.nvrtc64_112_0.runtime.win-x64": "11.8.0-preview.1"
-      }
-    },
-  }
-}

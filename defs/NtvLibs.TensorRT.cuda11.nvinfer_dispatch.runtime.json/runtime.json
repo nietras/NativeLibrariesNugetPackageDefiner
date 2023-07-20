@@ -1,9 +1,0 @@
-{
-  "runtimes": {
-    "win-x64": {
-      "NtvLibs.TensorRT.cuda11.nvinfer_dispatch.runtime.json": {
-        "NtvLibs.TensorRT.cuda11.nvinfer_dispatch.runtime.win-x64": "8.6.1.6-preview.1"
-      }
-    },
-  }
-}

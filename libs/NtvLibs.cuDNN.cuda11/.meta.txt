@@ -1,2 +1,0 @@
-<ROOT>.infer64
-<ROOT>.train64

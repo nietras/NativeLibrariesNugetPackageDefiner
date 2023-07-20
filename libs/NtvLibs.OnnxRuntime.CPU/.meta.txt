@@ -1,2 +1,0 @@
-<ROOT>.onnxruntime
-<ROOT>.onnxruntime_providers_shared

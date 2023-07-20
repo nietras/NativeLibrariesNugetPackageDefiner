@@ -1,5 +1,0 @@
-<ROOT>.cublas64_11
-<ROOT>.cublasLt64_11
-<ROOT>.cudart64_110
-<ROOT>.cufft64_10
-<ROOT>.nvrtc64_112_0

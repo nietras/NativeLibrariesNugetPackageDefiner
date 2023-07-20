@@ -1,3 +1,0 @@
-This software contains source code provided by Microsoft Corporation.
-The full license agreement can be found here.
-https://visualstudio.microsoft.com/license-terms/vs2022-cruntime/

@@ -1,8 +1,0 @@
-<ROOT>.nvparsers
-<ROOT>.nvinfer
-<ROOT>.nvinfer_builder_resource
-<ROOT>.nvinfer_dispatch
-<ROOT>.nvinfer_lean
-<ROOT>.nvinfer_plugin
-<ROOT>.nvinfer_vc_plugin
-<ROOT>.nvonnxparser

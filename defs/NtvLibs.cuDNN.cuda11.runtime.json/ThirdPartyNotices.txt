@@ -1,3 +1,0 @@
-This software contains source code provided by NVIDIA Corporation.
-The full license agreement can be found here.
-https://docs.nvidia.com/deeplearning/cudnn/sla/index.html
