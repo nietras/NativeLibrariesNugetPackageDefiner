@@ -52,14 +52,22 @@ var arch = Environment.Is64BitProcess ? @"x64" : @"x86";
 var runtimeRelativeDir = $"runtimes/win-{arch}/native";
 var runtimesDir = Path.Combine(Environment.CurrentDirectory, runtimeRelativeDir);
 
-// AddDllDirectory does not work here for some reason
-//var handle = AddDllDirectory(runtimesDir);
-//log($"AddDllDirectory: {handle}");
-// Instead add runtimes directory directly to PATH environment variable
-const string PATH = nameof(PATH);
-var pathEnvVar = Environment.GetEnvironmentVariable(PATH);
-pathEnvVar += $";{runtimesDir}";
-Environment.SetEnvironmentVariable(PATH, pathEnvVar);
+// https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-setdefaultdlldirectories?redirectedfrom=MSDN
+const uint LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000;
+var result = SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
+log($"{nameof(SetDefaultDllDirectories)}: {result}");
+// AddDllDirectory works if SetDefaultDllDirectories is called first
+var handle = AddDllDirectory(runtimesDir);
+log($"AddDllDirectory: {handle}");
+// SetDllDirectory works but this overrides previous set and only allows one directory
+// https://stackoverflow.com/questions/44588618/setdlldirectory-does-not-cascade-so-dependency-dlls-cannot-be-loaded
+//var setDll = SetDllDirectory(runtimesDir);
+//log($"SetDllDirectory: {setDll}");
+// Adding to PATH environment variable also works but is discouraged
+//const string PATH = nameof(PATH);
+//var pathEnvVar = Environment.GetEnvironmentVariable(PATH);
+//pathEnvVar += $";{runtimesDir}";
+//Environment.SetEnvironmentVariable(PATH, pathEnvVar);
 
 // Loads fine without PATH or AddDllDirectory, but we are not in charge of loading these
 //NativeLibrary.Load(@"nvinfer_builder_resource.dll", typeof(Program).Assembly, DllImportSearchPath.SafeDirectories);
@@ -91,9 +99,17 @@ using var output = inference.Run(namedOnnxValues);
 
 foreach (var o in output) { log($"Output: {o.Name}"); };
 
-//[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-//[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-//static extern int AddDllDirectory(string newDirectory);
+[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+static extern int AddDllDirectory(string newDirectory);
+
+[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+[return: MarshalAs(UnmanagedType.Bool)]
+[DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+static extern bool SetDllDirectory(string lpPathName);
+
+[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+static extern bool SetDefaultDllDirectories(uint directoryFlags);
 
 // https://github.com/dotnet/ClangSharp/blob/main/tests/ClangSharp.UnitTests/CXTranslationUnitTest.cs
 //var name = "basic";
