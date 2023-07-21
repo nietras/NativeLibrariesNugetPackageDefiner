@@ -24,11 +24,11 @@ static class NativeDllSearchDirectories
         // Add extra search paths if needed
         if (extraSearchPaths.Length > 0)
         {
-            var addNextSeparator = nativeDllSearchDirectories.Length == 0
-                || nativeDllSearchDirectories.EndsWith(Separator);
-            var nextSeparator = addNextSeparator ? "" : Separator.ToString();
+            var nextSeparator = nativeDllSearchDirectories.Length == 0 ? "" : Separator.ToString();
 
-            nativeDllSearchDirectories += nextSeparator + string.Join(Separator, extraSearchPaths);
+            // Add new paths first
+            nativeDllSearchDirectories = string.Join(Separator, extraSearchPaths) +
+                nextSeparator + nativeDllSearchDirectories;
 
             AppDomain.CurrentDomain.SetData(NATIVE_DLL_SEARCH_DIRECTORIES, nativeDllSearchDirectories);
         }
@@ -55,7 +55,7 @@ static class NativeDllSearchDirectories
                     // AddDllDirectory works if SetDefaultDllDirectories is called first
                     var cookie = AddDllDirectory(nativeDllDir);
                     var maybeLastErrorMessage = $"{(cookie == 0 ? new Win32Exception().Message : string.Empty)}";
-                    log($"{nameof(AddDllDirectory)} '{nativeDllDir}' {cookie} 'maybeLastErrorMessage'");
+                    log($"{nameof(AddDllDirectory)} '{nativeDllDir}' {cookie} '{maybeLastErrorMessage}'");
                 }
             }
         }
