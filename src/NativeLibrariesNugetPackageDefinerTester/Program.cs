@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,8 +12,6 @@ Action<string> log = t => { Trace.WriteLine(t); Console.WriteLine(t); };
 log(RuntimeInformation.RuntimeIdentifier);
 log(Environment.CurrentDirectory);
 
-var nativeDllSearchDirectories = AppDomain.CurrentDomain.GetData("NATIVE_DLL_SEARCH_DIRECTORIES");
-log($"{nativeDllSearchDirectories}");
 
 // https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#lazy-loading
 // Lazy Loading delays loading of CUDA modules and kernels from program
@@ -48,17 +47,46 @@ log($"{nativeDllSearchDirectories}");
 // assuming CUDA Programming Model is followed.
 Environment.SetEnvironmentVariable("CUDA_MODULE_LOADING", "LAZY");
 
-var arch = Environment.Is64BitProcess ? @"x64" : @"x86";
-var runtimeRelativeDir = $"runtimes/win-{arch}/native";
-var runtimesDir = Path.Combine(Environment.CurrentDirectory, runtimeRelativeDir);
+// https://github.com/dotnet/fsharp/issues/10136#issuecomment-695108882
 
 // https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-setdefaultdlldirectories?redirectedfrom=MSDN
 const uint LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000;
 var result = SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
 log($"{nameof(SetDefaultDllDirectories)}: {result}");
+// AddDllDirectory for each directory in NATIVE_DLL_SEARCH_DIRECTORIES that is a
+// sub-directory of current directory.
+// https://learn.microsoft.com/en-us/dotnet/core/dependency-loading/default-probing
+var nativeDllSearchDirectoriesDelimiter = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ';' : ':';
+var arch = Environment.Is64BitProcess ? @"x64" : @"x86";
+var ourCustomDllArchDirectory = Path.Combine(Environment.CurrentDirectory, arch);
+const string NATIVE_DLL_SEARCH_DIRECTORIES = "NATIVE_DLL_SEARCH_DIRECTORIES";
+var nativeDllSearchDirectories = (string?)AppDomain.CurrentDomain.GetData(NATIVE_DLL_SEARCH_DIRECTORIES) ?? string.Empty;
+nativeDllSearchDirectories += ((nativeDllSearchDirectories.EndsWith(nativeDllSearchDirectoriesDelimiter) || nativeDllSearchDirectories.Length == 0)
+    ? "" : nativeDllSearchDirectoriesDelimiter)
+    + ourCustomDllArchDirectory;
+AppDomain.CurrentDomain.SetData(NATIVE_DLL_SEARCH_DIRECTORIES, nativeDllSearchDirectories);
+log($"{nativeDllSearchDirectories}");
+if (nativeDllSearchDirectories is not null)
+{
+    var currentDirectoryInfo = new DirectoryInfo(Environment.CurrentDirectory);
+    var nativeDllDirs = nativeDllSearchDirectories.Split(nativeDllSearchDirectoriesDelimiter, StringSplitOptions.RemoveEmptyEntries);
+    foreach (var nativeDllDir in nativeDllDirs)
+    {
+        var nativeDllDirInfo = new DirectoryInfo(nativeDllDir);
+        if (nativeDllDirInfo.FullName.StartsWith(currentDirectoryInfo.FullName) && Directory.Exists(nativeDllDirInfo.FullName))
+        {
+            // AddDllDirectory works if SetDefaultDllDirectories is called first
+            var cookie = AddDllDirectory(nativeDllDir);
+            log($"{nameof(AddDllDirectory)} '{nativeDllDir}' {cookie} '{(cookie == 0 ? new Win32Exception().Message : string.Empty)}'");
+        }
+    }
+}
+//var arch = Environment.Is64BitProcess ? @"x64" : @"x86";
+//var runtimeRelativeDir = $"runtimes/win-{arch}/native";
+//var runtimesDir = Path.Combine(Environment.CurrentDirectory, runtimeRelativeDir);
 // AddDllDirectory works if SetDefaultDllDirectories is called first
-var handle = AddDllDirectory(runtimesDir);
-log($"AddDllDirectory: {handle}");
+//var handle = AddDllDirectory(runtimesDir);
+//log($"AddDllDirectory: {handle}");
 // SetDllDirectory works but this overrides previous set and only allows one directory
 // https://stackoverflow.com/questions/44588618/setdlldirectory-does-not-cascade-so-dependency-dlls-cannot-be-loaded
 //var setDll = SetDllDirectory(runtimesDir);
