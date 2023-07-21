@@ -14,16 +14,13 @@ static class NativeDllSearchDirectories
     // https://learn.microsoft.com/en-us/dotnet/core/dependency-loading/default-probing
     const string NATIVE_DLL_SEARCH_DIRECTORIES = nameof(NATIVE_DLL_SEARCH_DIRECTORIES);
     static readonly char Separator = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ';' : ':';
+    // Discussions
+    // https://github.com/dotnet/fsharp/issues/10136#issuecomment-695108882
 
     public static void AddDllDirectories(Action<string> log, params string[] extraSearchPaths)
     {
-        // https://github.com/dotnet/fsharp/issues/10136#issuecomment-695108882
-
-        var result = SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
-        log($"{nameof(SetDefaultDllDirectories)}: {result}");
-
-        var nativeDllSearchDirectories = (string?)AppDomain.CurrentDomain
-            .GetData(NATIVE_DLL_SEARCH_DIRECTORIES) ?? string.Empty;
+        var nativeDllSearchDirectories = AppDomain.CurrentDomain
+            .GetData(NATIVE_DLL_SEARCH_DIRECTORIES) as string ?? string.Empty;
         // Add extra search paths if needed
         if (extraSearchPaths.Length > 0)
         {
@@ -35,24 +32,31 @@ static class NativeDllSearchDirectories
 
             AppDomain.CurrentDomain.SetData(NATIVE_DLL_SEARCH_DIRECTORIES, nativeDllSearchDirectories);
         }
-        log($"{nativeDllSearchDirectories}");
 
-        var nativeDllDirs = nativeDllSearchDirectories.Split(Separator,
-            StringSplitOptions.RemoveEmptyEntries);
+        log($"{NATIVE_DLL_SEARCH_DIRECTORIES} = '{nativeDllSearchDirectories}'");
 
-        // AddDllDirectory for each directory in NATIVE_DLL_SEARCH_DIRECTORIES
-        // that is a sub-directory of current directory.
-        var currentDirectoryInfo = new DirectoryInfo(Environment.CurrentDirectory);
-        foreach (var nativeDllDir in nativeDllDirs)
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            var nativeDllDirInfo = new DirectoryInfo(nativeDllDir);
-            if (nativeDllDirInfo.FullName.StartsWith(currentDirectoryInfo.FullName) &&
-                Directory.Exists(nativeDllDirInfo.FullName))
+            var result = SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
+            log($"{nameof(SetDefaultDllDirectories)}: {result}");
+
+            var nativeDllDirs = nativeDllSearchDirectories.Split(Separator,
+                StringSplitOptions.RemoveEmptyEntries);
+
+            // AddDllDirectory for each directory in NATIVE_DLL_SEARCH_DIRECTORIES
+            // that is a sub-directory of current directory.
+            var currentDirectoryInfo = new DirectoryInfo(Environment.CurrentDirectory);
+            foreach (var nativeDllDir in nativeDllDirs)
             {
-                // AddDllDirectory works if SetDefaultDllDirectories is called first
-                var cookie = AddDllDirectory(nativeDllDir);
-                var maybeLastErrorMessage = $"{(cookie == 0 ? new Win32Exception().Message : string.Empty)}";
-                log($"{nameof(AddDllDirectory)} '{nativeDllDir}' {cookie} 'maybeLastErrorMessage'");
+                var nativeDllDirInfo = new DirectoryInfo(nativeDllDir);
+                if (nativeDllDirInfo.FullName.StartsWith(currentDirectoryInfo.FullName) &&
+                    Directory.Exists(nativeDllDirInfo.FullName))
+                {
+                    // AddDllDirectory works if SetDefaultDllDirectories is called first
+                    var cookie = AddDllDirectory(nativeDllDir);
+                    var maybeLastErrorMessage = $"{(cookie == 0 ? new Win32Exception().Message : string.Empty)}";
+                    log($"{nameof(AddDllDirectory)} '{nativeDllDir}' {cookie} 'maybeLastErrorMessage'");
+                }
             }
         }
     }
