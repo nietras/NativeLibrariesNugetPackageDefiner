@@ -9,7 +9,7 @@ namespace NativeLibrariesNugetPackageDefinerTester;
 static class NativeDllSearchDirectories
 #pragma warning restore CA1060 // Move pinvokes to native methods class
 {
-    // https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-setdefaultdlldirectories?redirectedfrom=MSDN
+    // https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-setdefaultdlldirectories
     const uint LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000;
     // https://learn.microsoft.com/en-us/dotnet/core/dependency-loading/default-probing
     const string NATIVE_DLL_SEARCH_DIRECTORIES = nameof(NATIVE_DLL_SEARCH_DIRECTORIES);
