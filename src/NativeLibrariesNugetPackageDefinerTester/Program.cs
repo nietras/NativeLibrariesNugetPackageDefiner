@@ -11,6 +11,9 @@ Action<string> log = t => { Trace.WriteLine(t); Console.WriteLine(t); };
 log(RuntimeInformation.RuntimeIdentifier);
 log(Environment.CurrentDirectory);
 
+var nativeDllSearchDirectories = AppDomain.CurrentDomain.GetData("NATIVE_DLL_SEARCH_DIRECTORIES");
+log($"{nativeDllSearchDirectories}");
+
 // https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#lazy-loading
 // Lazy Loading delays loading of CUDA modules and kernels from program
 // initialization closer to kernels execution. If a program does not use every
