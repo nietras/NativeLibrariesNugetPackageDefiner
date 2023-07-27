@@ -37,6 +37,10 @@ static class NativeDllSearchDirectories
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
+            // Setup search for native dll libraries in:
+            // - application directory
+            // - paths set using AddDllDirectory
+            // - %windows%\system32
             var result = SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
             log($"{nameof(SetDefaultDllDirectories)}: {result}");
 

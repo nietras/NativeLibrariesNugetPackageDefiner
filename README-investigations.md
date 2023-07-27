@@ -792,6 +792,9 @@ TODO: Address issue if using multiple `RuntimeIdentifiers` line `win-x64;win-x86
 then nothing is copied to output folder using the `runtime.json` approach.
 
 ## Links
+
+text 
+
  * "[Feature] Increase the package size limit on NuGet.org from 250 MB"
    https://github.com/NuGet/NuGetGallery/issues/9473
    This features a discussion on how to split a nuget package and links.
@@ -821,3 +824,23 @@ then nothing is copied to output folder using the `runtime.json` approach.
    https://github.com/NuGet/Home/issues/8623
  * Mizux `dotnet-native` template git repository
    https://github.com/Mizux/dotnet-native
+ * Where to put Native libraries inside a Project and how to reference them?
+   https://github.com/dotnet/runtime/issues/11404
+
+text
+
+ * Dependency loading in .NET
+   https://learn.microsoft.com/en-us/dotnet/core/dependency-loading/overview
+ * About System.Runtime.Loader.AssemblyLoadContext
+   https://learn.microsoft.com/en-us/dotnet/core/dependency-loading/understanding-assemblyloadcontext
+ * Unmanaged (native) library loading algorithm
+   https://learn.microsoft.com/en-us/dotnet/core/dependency-loading/loading-unmanaged
+ * Managed assembly loading algorithm
+   https://learn.microsoft.com/en-us/dotnet/core/dependency-loading/loading-managed
+ * Additional-deps
+   https://github.com/dotnet/runtime/blob/main/docs/design/features/additional-deps.md
+ * NATIVE BINDINGS IN C#
+   https://www.lostindetails.com/articles/Native-Bindings-in-CSharp
+ * .NET Core Plugins
+   https://github.com/natemcmaster/DotNetCorePlugins
+   https://natemcmaster.com/blog/2018/07/25/netcore-plugins/

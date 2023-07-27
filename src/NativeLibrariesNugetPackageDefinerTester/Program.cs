@@ -70,7 +70,7 @@ NativeDllSearchDirectories.AddDllDirectories(log);
 
 var modelPath = "smallsimpledense_0_1_0.onnx";
 
-var env = OrtEnv.Instance;
+//var env = OrtEnv.Instance;
 //NativeApiStatus.VerifySuccess(NativeMethods.OrtCreateEnv(LogLevel.Warning, @"CSharpOnnxRuntime", out var handle));
 //var bytes = File.ReadAllBytes(modelPath);
 //var availableProviders = InferenceSessionFactory.FindAvailablePrioritizedExecutionProviders(
