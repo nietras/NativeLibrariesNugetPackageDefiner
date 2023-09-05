@@ -844,3 +844,7 @@ text
  * .NET Core Plugins
    https://github.com/natemcmaster/DotNetCorePlugins
    https://natemcmaster.com/blog/2018/07/25/netcore-plugins/
+
+
+TorchSharp manually loads dependencies, meaning even if not used will be loaded.
+https://github.com/dotnet/TorchSharp/blob/main/src/TorchSharp/Torch.cs
