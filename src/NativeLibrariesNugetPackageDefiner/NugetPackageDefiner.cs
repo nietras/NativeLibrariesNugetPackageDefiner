@@ -278,8 +278,16 @@ static class NugetPackageDefiner
                 }
                 if (metaPackageCount > 0)
                 {
-                    // Try again later
-                    toProcess.Enqueue(metaPackageAndPackageNames);
+                    if (toProcess.Count > 0)
+                    {
+                        log($"Try later '{metaPackageAndPackageNames.Key}' with '{string.Join(",", metaPackageAndPackageNames.Value)}'");
+                        // Try again later
+                        toProcess.Enqueue(metaPackageAndPackageNames);
+                    }
+                    else
+                    {
+                        log($"SKIPPING meta-package '{metaPackageAndPackageNames.Key}' due to missing dependencies (check names).");
+                    }
                 }
             }
         }
