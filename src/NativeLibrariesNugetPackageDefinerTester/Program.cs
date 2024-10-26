@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using Microsoft.ML.OnnxRuntime;
-using Microsoft.ML.OnnxRuntime.Tensors;
-using NativeLibrariesNugetPackageDefinerTester;
+using TorchSharp;
+using static TorchSharp.torch.nn;
 
 Action<string> log = t => { Trace.WriteLine(t); Console.WriteLine(t); };
 
@@ -46,7 +44,7 @@ log(Environment.CurrentDirectory);
 // assuming CUDA Programming Model is followed.
 Environment.SetEnvironmentVariable("CUDA_MODULE_LOADING", "LAZY");
 
-NativeDllSearchDirectories.AddDllDirectories(log);
+//NativeDllSearchDirectories.AddDllDirectories(log);
 
 //var arch = Environment.Is64BitProcess ? @"x64" : @"x86";
 //var runtimeRelativeDir = $"runtimes/win-{arch}/native";
@@ -68,7 +66,7 @@ NativeDllSearchDirectories.AddDllDirectories(log);
 //NativeLibrary.Load(@"nvinfer_builder_resource.dll", typeof(Program).Assembly, DllImportSearchPath.SafeDirectories);
 //NativeLibrary.Load(@"cudnn_cnn_infer64_8.dll", typeof(Program).Assembly, DllImportSearchPath.SafeDirectories);
 
-var modelPath = "smallsimpledense_0_1_0.onnx";
+//var modelPath = "smallsimpledense_0_1_0.onnx";
 
 //var env = OrtEnv.Instance;
 //NativeApiStatus.VerifySuccess(NativeMethods.OrtCreateEnv(LogLevel.Warning, @"CSharpOnnxRuntime", out var handle));
@@ -77,22 +75,22 @@ var modelPath = "smallsimpledense_0_1_0.onnx";
 //    ExecutionProviders.DefaultPrioritizedList)
 //    .ToArray();
 
-using var options = new SessionOptions();
-if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-{
-    options.AppendExecutionProvider_Tensorrt();
-    options.AppendExecutionProvider_CUDA();
-}
-using var inference = new InferenceSession(modelPath, options);
+//using var options = new SessionOptions();
+//if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+//{
+//    options.AppendExecutionProvider_Tensorrt();
+//    options.AppendExecutionProvider_CUDA();
+//}
+//using var inference = new InferenceSession(modelPath, options);
 
-var namedOnnxValues = inference.InputMetadata.Select(
-    p => NamedOnnxValue.CreateFromTensor(p.Key, new DenseTensor<float>(p.Value.Dimensions))).ToArray();
+//var namedOnnxValues = inference.InputMetadata.Select(
+//    p => NamedOnnxValue.CreateFromTensor(p.Key, new DenseTensor<float>(p.Value.Dimensions))).ToArray();
 
-foreach (var i in inference.InputMetadata.Keys) { log($"Input: {i}"); };
+//foreach (var i in inference.InputMetadata.Keys) { log($"Input: {i}"); };
 
-using var output = inference.Run(namedOnnxValues);
+//using var output = inference.Run(namedOnnxValues);
 
-foreach (var o in output) { log($"Output: {o.Name}"); };
+//foreach (var o in output) { log($"Output: {o.Name}"); };
 
 
 // https://github.com/dotnet/ClangSharp/blob/main/tests/ClangSharp.UnitTests/CXTranslationUnitTest.cs
@@ -118,26 +116,26 @@ foreach (var o in output) { log($"Output: {o.Name}"); };
 //    Directory.Delete(dir, true);
 //}
 
-//using TorchSharp;
-//using static TorchSharp.torch.nn;
+torch.InitializeDeviceType(DeviceType.CUDA);
 
-//var lin1 = Linear(1000, 100);
-//var lin2 = Linear(100, 10);
-//var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2)).cuda();
 
-//var x = torch.randn(64, 1000).cuda();
-//var y = torch.randn(64, 10).cuda();
+var lin1 = Linear(1000, 100);
+var lin2 = Linear(100, 10);
+var seq = Sequential(("lin1", lin1), ("relu1", ReLU()), ("drop1", Dropout(0.1)), ("lin2", lin2)).cuda();
 
-//var optimizer = torch.optim.Adam(seq.parameters());
+var x = torch.randn(64, 1000).cuda();
+var y = torch.randn(64, 10).cuda();
 
-//for (int i = 0; i < 10; i++)
-//{
-//    var eval = seq.forward(x);
-//    var output = functional.mse_loss(eval, y, Reduction.Sum);
+var optimizer = torch.optim.Adam(seq.parameters());
 
-//    optimizer.zero_grad();
+for (int i = 0; i < 10; i++)
+{
+    var eval = seq.forward(x);
+    var output = functional.mse_loss(eval, y, Reduction.Sum);
 
-//    output.backward();
+    optimizer.zero_grad();
 
-//    optimizer.step();
-//}
+    output.backward();
+
+    optimizer.step();
+}
