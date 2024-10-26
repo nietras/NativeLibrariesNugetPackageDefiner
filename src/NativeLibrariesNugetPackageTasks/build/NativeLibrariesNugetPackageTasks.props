@@ -1,0 +1,11 @@
+<Project TreatAsLocalProperty="TaskFolder;ThisFileNameWithoutExtension;TaskAssembly">
+
+  <PropertyGroup>
+    <TaskFolder Condition=" '$(MSBuildRuntimeType)' == 'Core' ">netstandard1.6</TaskFolder>
+    <TaskFolder Condition=" '$(MSBuildRuntimeType)' != 'Core' ">net46</TaskFolder>
+    <ThisFileNameWithoutExtension>$([System.IO.Path]::GetFileNameWithoutExtension($(MSBuildThisFile)))</ThisFileNameWithoutExtension>
+    <TaskAssembly>$(MSBuildThisFileDirectory)..\tasks\$(TaskFolder)\$(ThisFileNameWithoutExtension).dll</TaskAssembly>
+  </PropertyGroup>
+
+  <UsingTask TaskName="MSBuildTasks.Restitcher" AssemblyFile="$(TaskAssembly)" />
+</Project>

@@ -1,0 +1,6 @@
+<Project TreatAsLocalProperty="ThisFileNameWithoutExtension">
+  <PropertyGroup>
+    <ThisFileNameWithExtension>$([System.IO.Path]::GetFileNameWithoutExtension($(MSBuildThisFile)))</ThisFileNameWithExtension>
+  </PropertyGroup>
+  <Import Project="..\build\$(ThisFileNameWithoutExtension).props" />
+</Project>

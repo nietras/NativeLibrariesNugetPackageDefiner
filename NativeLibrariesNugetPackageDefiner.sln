@@ -1,0 +1,66 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeLibrariesNugetPackageDefiner", "src\NativeLibrariesNugetPackageDefiner\NativeLibrariesNugetPackageDefiner.csproj", "{CB942FDA-9FB1-4DF5-AFF5-DB7501F536F9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeLibrariesNugetPackageTasks", "src\NativeLibrariesNugetPackageTasks\NativeLibrariesNugetPackageTasks.csproj", "{E5A1B4C6-949C-4163-B1C9-B61F77A961EB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeLibrariesNugetPackageDefinerTester", "src\NativeLibrariesNugetPackageDefinerTester\NativeLibrariesNugetPackageDefinerTester.csproj", "{A9663625-FD93-4C37-8E56-D8F98399F258}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeLibrariesNugetPackageDefinerTesterUnitTests", "src\NativeLibrariesNugetPackageDefinerTesterUnitTests\NativeLibrariesNugetPackageDefinerTesterUnitTests.csproj", "{8E5CD16D-0636-445C-B160-70D5DD9E0564}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{08E96163-062F-4A95-A11F-2ACBEE1A7093}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		all-pack.ps1 = all-pack.ps1
+		CODE-OF-CONDUCT.md = CODE-OF-CONDUCT.md
+		getnuget.ps1 = getnuget.ps1
+		LICENSE.txt = LICENSE.txt
+		nuget.config = nuget.config
+		README-investigations.md = README-investigations.md
+		README.md = README.md
+		THIRD-PARTY-NOTICES = THIRD-PARTY-NOTICES
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E568445B-9BB2-4129-ACCD-74DB6CEB6F0B}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+		src\OutputBuildProject.props = src\OutputBuildProject.props
+		src\OutputBuildProps.props = src\OutputBuildProps.props
+		src\OutputBuildTargets.props = src\OutputBuildTargets.props
+		src\SourceLink.GitHub.props = src\SourceLink.GitHub.props
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CB942FDA-9FB1-4DF5-AFF5-DB7501F536F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB942FDA-9FB1-4DF5-AFF5-DB7501F536F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB942FDA-9FB1-4DF5-AFF5-DB7501F536F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB942FDA-9FB1-4DF5-AFF5-DB7501F536F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5A1B4C6-949C-4163-B1C9-B61F77A961EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5A1B4C6-949C-4163-B1C9-B61F77A961EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5A1B4C6-949C-4163-B1C9-B61F77A961EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5A1B4C6-949C-4163-B1C9-B61F77A961EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9663625-FD93-4C37-8E56-D8F98399F258}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9663625-FD93-4C37-8E56-D8F98399F258}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9663625-FD93-4C37-8E56-D8F98399F258}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9663625-FD93-4C37-8E56-D8F98399F258}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E5CD16D-0636-445C-B160-70D5DD9E0564}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E5CD16D-0636-445C-B160-70D5DD9E0564}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E5CD16D-0636-445C-B160-70D5DD9E0564}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E5CD16D-0636-445C-B160-70D5DD9E0564}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9F01F23F-890E-44E8-83A0-42164EC07960}
+	EndGlobalSection
+EndGlobal
