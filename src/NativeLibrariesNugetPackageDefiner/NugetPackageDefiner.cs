@@ -24,6 +24,8 @@ static class NugetPackageDefiner
     // On Linux or similar a native library might start with "lib", to unify
     // naming, remove this from start of package name.
     const string LibPrefix = "lib";
+    // Some libraries will start with "lib" even if ".dll" so cannot remove lib then
+    const string DllExtension = ".dll";
     // Using "json" as hacked runtime identifier to allow handling
     // `runtime.json` packages in same way as say `win-x64`.
     const string JsonRuntimeIdentifier = "json";
@@ -98,9 +100,12 @@ static class NugetPackageDefiner
                     var nativeLibrarySizeFilePath = Path.Combine(runtimeIdentifierDirectory, fileName + SizeFileNameSuffix);
                     File.WriteAllText(nativeLibrarySizeFilePath, nativeLibrarySize.ToString());
 
+                    var extension = Path.GetExtension(packageFile);
                     var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(packageFile);
                     var sanitizedFileNameForPackageIdentifier = fileNameWithoutExtension
-                        .IndexOf(LibPrefix, StringComparison.Ordinal) == 0
+                        .IndexOf(LibPrefix, StringComparison.Ordinal) == 0 &&
+                        // Only remove "lib" if not .dll, to keep it for .dll files
+                        !extension.Equals(DllExtension, StringComparison.OrdinalIgnoreCase)
                         ? fileNameWithoutExtension.Substring(LibPrefix.Length) : fileNameWithoutExtension;
 
                     var basePackageIdentifier = $"{rootPackageIdentifier}.{sanitizedFileNameForPackageIdentifier}";
