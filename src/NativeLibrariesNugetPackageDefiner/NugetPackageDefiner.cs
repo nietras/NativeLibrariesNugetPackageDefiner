@@ -98,7 +98,7 @@ static class NugetPackageDefiner
                         $"file version '{versionInfo.FileVersion}' defined version '{version}'");
 
                     var nativeLibrarySizeFilePath = Path.Combine(runtimeIdentifierDirectory, fileName + SizeFileNameSuffix);
-                    File.WriteAllText(nativeLibrarySizeFilePath, nativeLibrarySize.ToString());
+                    WriteTextIfDifferent(nativeLibrarySizeFilePath, nativeLibrarySize.ToString());
 
                     var extension = Path.GetExtension(packageFile);
                     var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(packageFile);
@@ -188,14 +188,14 @@ static class NugetPackageDefiner
                             joinFragmentsTaskRelativePath, runtimeIdentifier, fragments.Count, nativeLibrarySize, hash);
                         var targetsPath = Path.Combine(targetsDirectory, $"{runtimeSpecificPackageIdentifier}.targets");
                         EnsureDirectoryCreated(targetsDirectory);
-                        File.WriteAllText(targetsPath, targetsContents);
+                        WriteTextIfDifferent(targetsPath, targetsContents);
 
                         // Write the C# file defining the MSBuild task to join fragments
                         var joinFragmentsTaskDirectory = Path.Combine(nuspecDirectory, joinFragmentsRelativeDirectory);
                         var joinFragmentsTaskContents = ReadResourceNameEndsWith(joinFragmentsTaskFileName);
                         var joinFragmentsTaskPath = Path.Combine(joinFragmentsTaskDirectory, joinFragmentsTaskFileName);
                         EnsureDirectoryCreated(joinFragmentsTaskDirectory);
-                        File.WriteAllText(joinFragmentsTaskPath, joinFragmentsTaskContents);
+                        WriteTextIfDifferent(joinFragmentsTaskPath, joinFragmentsTaskContents);
                     }
 
                     if (!basePackageIdentifierExtensionToPackageInfos.TryGetValue(basePackageIdentifier, out var packageInfos))
@@ -222,7 +222,7 @@ static class NugetPackageDefiner
                 var emptyTargetFrameworkLibDirectory = Path.Combine(nuspecDirectory, $"lib/{targetFrameworkMoniker}/");
                 var emptyTargetFrameworkLibPath = Path.Combine(emptyTargetFrameworkLibDirectory, $"_._");
                 EnsureDirectoryCreated(emptyTargetFrameworkLibDirectory);
-                File.WriteAllText(emptyTargetFrameworkLibPath, string.Empty);
+                WriteTextIfDifferent(emptyTargetFrameworkLibPath, string.Empty);
 
                 var readmeContents = ReadmeContentsMetaRuntimeJson;
                 WriteReadmeLicenseMaybeThirdPartyNotices(nuspecDirectory,
@@ -392,7 +392,7 @@ static class NugetPackageDefiner
         var nuspecPath = Path.Combine(directory, nuspecFileName);
         // meta package must be created after for each unique file name
         EnsureDirectoryCreated(directory);
-        File.WriteAllText(nuspecPath, contents);
+        WriteTextIfDifferent(nuspecPath, contents);
     }
 
     static void EnsureDirectoryCreated(string directory)
@@ -427,13 +427,13 @@ static class NugetPackageDefiner
         string packageDirectory, string readmeContents, string licenseContents, string? thirdPartyNoticesContents)
     {
         var readmePath = Path.Combine(packageDirectory, ReadmeFileName);
-        File.WriteAllText(readmePath, readmeContents);
+        WriteTextIfDifferent(readmePath, readmeContents);
         var licensePath = Path.Combine(packageDirectory, LicenseFileName);
-        File.WriteAllText(licensePath, licenseContents);
+        WriteTextIfDifferent(licensePath, licenseContents);
         if (thirdPartyNoticesContents is not null)
         {
             var thirdPartyNoticesPath = Path.Combine(packageDirectory, ThirdPartyNoticesFileName);
-            File.WriteAllText(thirdPartyNoticesPath, thirdPartyNoticesContents);
+            WriteTextIfDifferent(thirdPartyNoticesPath, thirdPartyNoticesContents);
         }
     }
 
@@ -468,6 +468,15 @@ static class NugetPackageDefiner
         }
         // TODO: Add remaining runtimes with base version just in case for future
         sb.Append(footer);
-        File.WriteAllText(filePath, sb.ToString());
+        WriteTextIfDifferent(filePath, sb.ToString());
+    }
+
+    static void WriteTextIfDifferent(string filePath, string content)
+    {
+        var contentSame = File.Exists(filePath) && File.ReadAllText(filePath) == content;
+        if (!contentSame)
+        {
+            File.WriteAllText(filePath, content);
+        }
     }
 }
