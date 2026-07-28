@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="TorchSharp" Version="0.100.3" />
+    <PackageReference Include="TorchSharp" Version="0.107.0" />
     <PackageReference Include="libtorch-cuda-11.7-win-x64" Version="2.0.1.1" />
     <!--<PackageReference Include="libclang" Version="16.0.6" />-->
     <!--<PackageReference Include="libclang.runtime.win-x64" Version="16.0.6" />

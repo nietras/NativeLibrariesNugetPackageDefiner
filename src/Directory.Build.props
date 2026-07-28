@@ -3,22 +3,22 @@
   <PropertyGroup>
     <AssemblyVersion>0.1.0</AssemblyVersion>
     <FileVersion>0.1.0</FileVersion>
-    <InformationalVersion>$(FileVersion)-preview.4</InformationalVersion>
+    <InformationalVersion>$(FileVersion)-preview.5</InformationalVersion>
     <PackageVersion>$(InformationalVersion)</PackageVersion>
 
     <IsPackable>false</IsPackable>
 
     <Company>nietras</Company>
     <Authors>nietras</Authors>
-    <Copyright>Copyright © nietras A/S 2023</Copyright>
+    <Copyright>Copyright © nietras A/S 2026</Copyright>
     <NeutralLanguage>en</NeutralLanguage>
 
-    <TargetFrameworkBase>net7.0</TargetFrameworkBase>
+    <TargetFrameworkBase>net10.0</TargetFrameworkBase>
     <TargetFrameworkLibrary>$(TargetFrameworkBase)</TargetFrameworkLibrary>
     <TargetFrameworkLibraryTest>$(TargetFrameworkLibrary)</TargetFrameworkLibraryTest>
     <TargetFrameworkConsole>$(TargetFrameworkLibrary)</TargetFrameworkConsole>
 
-    <LangVersion>11.0</LangVersion>
+    <LangVersion>14.0</LangVersion>
     <Deterministic>true</Deterministic>
     <DebugType>pdbonly</DebugType>
     <Nullable>enable</Nullable>
