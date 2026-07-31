@@ -251,7 +251,8 @@ static class NugetPackageDefiner
                 foreach (var (suffix, packageInfos) in suffixToPackageInfos)
                 {
                     var metaPackageInfos = packageInfos
-                        .Where(info => packageNames.Any(metaPackageName => info.Name.StartsWith(metaPackageName)))
+                        .Where(info => packageNames.Any(metaPackageName =>
+                            info.Name.StartsWith(metaPackageName + IdSeparator)))
                         .ToArray();
                     // Doesn't have to be same length as expected since in some
                     // cases some runtime identifier specific packages don't
